@@ -50,9 +50,8 @@ const solutions = Object.entries(sources)
 <Base title={`${data.id}. ${data.title}`}>
 	<h1>{data.id}. {data.title}</h1>
 	<p>
-		<span class={data.difficulty}>{data.difficulty}</span> ·
-		<a href={data.link}>Open on LeetCode</a> ·
-		solved {data.solved.toISOString().slice(0, 10)}
+		<span class:list={['difficulty', data.difficulty]}>{data.difficulty}</span>
+		<span class="muted">&nbsp;· solved {data.solved.toISOString().slice(0, 10)} ·&nbsp;</span><a href={data.link}>Open on LeetCode</a>
 	</p>
 	<p>{data.tags.map((tag) => <span class="tag">{tag}</span>)}</p>
 	{

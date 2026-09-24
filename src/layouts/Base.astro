@@ -11,9 +11,15 @@ const { title } = Astro.props;
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
 		<link rel="icon" href={url('/favicon.ico')} />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap"
+			rel="stylesheet"
+		/>
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
@@ -29,71 +35,141 @@ const { title } = Astro.props;
 
 <style is:global>
 	:root {
-		--bg: #ffffff;
-		--fg: #1f2328;
-		--muted: #656d76;
-		--border: #d0d7de;
-		--link: #0969da;
-		--easy: #1a7f37;
-		--medium: #9a6700;
-		--hard: #cf222e;
-		color-scheme: light dark;
+		--paper: #eef1f4;
+		--panel: #ffffff;
+		--ink: #1d2a3a;
+		--muted: #5b6878;
+		--rule: #cbd3dc;
+		--accent: #23798a;
+		--accent-soft: #d3ecef;
+		--easy: #3a8a4c;
+		--easy-soft: #d6eeda;
+		--medium: #c98e00;
+		--medium-soft: #fbefc9;
+		--hard: #b8472f;
+		--hard-soft: #f6dcd5;
+		color-scheme: light;
 	}
 	@media (prefers-color-scheme: dark) {
 		:root {
-			--bg: #0d1117;
-			--fg: #e6edf3;
-			--muted: #8d96a0;
-			--border: #30363d;
-			--link: #4493f8;
-			--easy: #3fb950;
-			--medium: #d29922;
-			--hard: #f85149;
+			--paper: #131a23;
+			--panel: #1b242f;
+			--ink: #e5ebf1;
+			--muted: #9ba8b6;
+			--rule: #324050;
+			--accent: #56b7c8;
+			--accent-soft: #163338;
+			--easy: #62bf74;
+			--easy-soft: #1b3522;
+			--medium: #f0b83a;
+			--medium-soft: #3b3117;
+			--hard: #f08a70;
+			--hard-soft: #3c1f18;
+			color-scheme: dark;
 		}
-		.astro-code,
 		.astro-code span {
 			color: var(--shiki-dark) !important;
-			background-color: var(--shiki-dark-bg) !important;
 		}
 	}
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
 	body {
+		margin: 0;
+		background: var(--paper);
+		color: var(--ink);
+		font-family: 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+		font-size: 17px;
+		line-height: 1.5;
+	}
+	header,
+	main {
+		max-width: 880px;
 		margin: 0 auto;
-		max-width: 52rem;
-		padding: 0 1rem 4rem;
-		background: var(--bg);
-		color: var(--fg);
-		font: 16px/1.6 system-ui, sans-serif;
+		padding: 0 20px;
 	}
 	header {
-		padding: 1rem 0;
-		border-bottom: 1px solid var(--border);
-		margin-bottom: 1.5rem;
+		padding-top: 20px;
 	}
 	header a {
-		font-weight: 600;
-		color: var(--fg);
+		font-weight: 700;
+		color: var(--muted);
 		text-decoration: none;
 	}
+	main {
+		padding-top: 24px;
+		padding-bottom: 56px;
+	}
+	h1 {
+		font-size: clamp(1.6rem, 4.2vw, 2.3rem);
+		line-height: 1.12;
+		letter-spacing: -0.012em;
+		margin: 0 0 10px;
+	}
+	h2 {
+		font-size: 1.15rem;
+		margin: 28px 0 8px;
+	}
 	a {
-		color: var(--link);
+		color: var(--accent);
 	}
-	pre {
-		padding: 1rem;
-		border-radius: 6px;
-		border: 1px solid var(--border);
+	a:focus-visible {
+		outline: 3px solid var(--accent);
+		outline-offset: 2px;
+	}
+	.muted {
+		color: var(--muted);
+	}
+	.panel {
+		background: var(--panel);
+		border: 1.5px solid var(--rule);
+		border-radius: 14px;
+	}
+	pre.astro-code {
+		background: var(--panel) !important;
+		border: 1.5px solid var(--rule);
+		border-radius: 10px;
+		padding: 14px 16px;
 		overflow-x: auto;
-		font-size: 14px;
+		font-size: 0.88rem;
+		line-height: 1.55;
 	}
-	.Easy { color: var(--easy); }
-	.Medium { color: var(--medium); }
-	.Hard { color: var(--hard); }
+	:not(pre) > code {
+		background: var(--panel);
+		border: 1.5px solid var(--rule);
+		border-radius: 6px;
+		padding: 0 5px;
+		font-size: 0.9em;
+	}
+	.difficulty {
+		display: inline-block;
+		padding: 1px 9px;
+		border-radius: 6px;
+		font-size: 0.85rem;
+		font-weight: 700;
+	}
+	.difficulty.Easy {
+		color: var(--easy);
+		background: var(--easy-soft);
+	}
+	.difficulty.Medium {
+		color: var(--medium);
+		background: var(--medium-soft);
+	}
+	.difficulty.Hard {
+		color: var(--hard);
+		background: var(--hard-soft);
+	}
 	.tag {
 		display: inline-block;
-		padding: 0 0.5rem;
-		margin: 0 0.25rem 0.25rem 0;
-		border: 1px solid var(--border);
-		border-radius: 999px;
+		padding: 1px 9px;
+		margin: 0 4px 4px 0;
+		border: 1.5px solid var(--rule);
+		border-radius: 7px;
 		font-size: 0.8rem;
 		color: var(--muted);
+		white-space: nowrap;
 	}
 </style>

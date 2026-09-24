@@ -8,8 +8,9 @@ const problems = (await getCollection('problems')).sort((a, b) => a.data.id - b.
 
 <Base title="learnleetcode">
 	<h1>My LeetCode journey</h1>
-	<p>{problems.length} problem{problems.length === 1 ? '' : 's'} solved.</p>
+	<p class="muted">{problems.length} problem{problems.length === 1 ? '' : 's'} solved.</p>
 
+	<div class="panel">
 	<table>
 		<thead>
 			<tr>
@@ -28,7 +29,9 @@ const problems = (await getCollection('problems')).sort((a, b) => a.data.id - b.
 						<td>
 							<a href={url(`/problems/${id}/`)}>{data.title}</a>
 						</td>
-						<td class={data.difficulty}>{data.difficulty}</td>
+						<td>
+							<span class:list={['difficulty', data.difficulty]}>{data.difficulty}</span>
+						</td>
 						<td>
 							{data.tags.map((tag) => (
 								<span class="tag">{tag}</span>
@@ -40,6 +43,7 @@ const problems = (await getCollection('problems')).sort((a, b) => a.data.id - b.
 			}
 		</tbody>
 	</table>
+	</div>
 </Base>
 
 <style>
@@ -47,12 +51,27 @@ const problems = (await getCollection('problems')).sort((a, b) => a.data.id - b.
 		width: 100%;
 		border-collapse: collapse;
 	}
+	.panel {
+		overflow-x: auto;
+	}
 	th,
 	td {
 		text-align: left;
-		padding: 0.5rem;
-		border-bottom: 1px solid var(--border);
+		padding: 10px 14px;
+		border-bottom: 1.5px solid var(--rule);
 		vertical-align: top;
+	}
+	th {
+		font-size: 0.78rem;
+		color: var(--muted);
+	}
+	tbody tr:last-child td {
+		border-bottom: none;
+	}
+	td:first-child,
+	td:last-child {
+		color: var(--muted);
+		white-space: nowrap;
 	}
 	@media (max-width: 600px) {
 		th:nth-child(4),
