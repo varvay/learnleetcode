@@ -11,10 +11,10 @@
   /* Tokens — the same values src/layouts/Base.astro ships. */
   :root, .theme-light {
     --paper: #eef1f4; --panel: #ffffff; --ink: #1d2a3a; --muted: #5b6878; --rule: #cbd3dc;
-    --accent: #23798a; --accent-soft: #d3ecef;
-    --easy: #3a8a4c;   --easy-soft: #d6eeda;
-    --medium: #c98e00; --medium-soft: #fbefc9;
-    --hard: #b8472f;   --hard-soft: #f6dcd5;
+    --teal: #23798a;  --teal-soft: #d3ecef;
+    --green: #3a8a4c; --green-soft: #d6eeda;
+    --amber: #c98e00; --amber-soft: #fbefc9;
+    --red: #b8472f;   --red-soft: #f6dcd5;
     --font-ui: 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
     color-scheme: light;
@@ -22,20 +22,31 @@
   @media (prefers-color-scheme: dark) {
     :root {
       --paper: #131a23; --panel: #1b242f; --ink: #e5ebf1; --muted: #9ba8b6; --rule: #324050;
-      --accent: #56b7c8; --accent-soft: #163338;
-      --easy: #62bf74;   --easy-soft: #1b3522;
-      --medium: #f0b83a; --medium-soft: #3b3117;
-      --hard: #f08a70;   --hard-soft: #3c1f18;
+      --teal: #56b7c8;  --teal-soft: #163338;
+      --green: #62bf74; --green-soft: #1b3522;
+      --amber: #f0b83a; --amber-soft: #3b3117;
+      --red: #f08a70;   --red-soft: #3c1f18;
       color-scheme: dark;
     }
   }
   .theme-dark {
     --paper: #131a23; --panel: #1b242f; --ink: #e5ebf1; --muted: #9ba8b6; --rule: #324050;
-    --accent: #56b7c8; --accent-soft: #163338;
-    --easy: #62bf74;   --easy-soft: #1b3522;
-    --medium: #f0b83a; --medium-soft: #3b3117;
-    --hard: #f08a70;   --hard-soft: #3c1f18;
+    --teal: #56b7c8;  --teal-soft: #163338;
+    --green: #62bf74; --green-soft: #1b3522;
+    --amber: #f0b83a; --amber-soft: #3b3117;
+    --red: #f08a70;   --red-soft: #3c1f18;
     color-scheme: dark;
+  }
+  /* Roles resolve per element, so they are declared wherever a theme is. */
+  :root, .theme-light, .theme-dark {
+    --accent: var(--teal);   --accent-soft: var(--teal-soft);
+    --easy: var(--green);    --easy-soft: var(--green-soft);
+    --medium: var(--amber);  --medium-soft: var(--amber-soft);
+    --hard: var(--red);      --hard-soft: var(--red-soft);
+    --scene-focus: var(--teal);   --scene-focus-soft: var(--teal-soft);
+    --scene-add: var(--green);    --scene-add-soft: var(--green-soft);
+    --scene-remove: var(--red);   --scene-remove-soft: var(--red-soft);
+    --scene-frame: var(--amber);  --scene-frame-soft: var(--amber-soft);
   }
 
   *, *::before, *::after { box-sizing: border-box; }
@@ -104,6 +115,48 @@
   .problems th { font-size: 0.72rem; color: var(--muted); }
   .problems tbody tr:last-child td { border-bottom: none; }
   .problems td:first-child, .problems td:last-child { color: var(--muted); white-space: nowrap; }
+
+  /* Explainer — mirrors src/components/Explainer.astro */
+  .x-button { font: inherit; font-size: 0.85rem; font-weight: 700; color: var(--ink); background: var(--panel); border: 1.5px solid var(--ink); border-radius: 8px; padding: 6px 12px; }
+  .x-button.primary { background: var(--ink); color: var(--panel); }
+  .x-button[disabled] { opacity: 0.35; }
+  .x-examples { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .x-example { font-size: 0.8rem; border: 1.5px solid var(--rule); border-radius: 8px; padding: 5px 10px; }
+  .x-example small { display: block; color: var(--muted); font-size: 0.72rem; }
+  .x-example.pressed { border-color: var(--ink); background: var(--panel); }
+  .x-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; font-size: 0.8rem; color: var(--muted); }
+  .x-input { background: var(--panel); border: 1.5px solid var(--rule); border-radius: 8px; padding: 5px 9px; width: 120px; color: var(--muted); }
+  .x-stage { background: var(--panel); border: 1.5px solid var(--rule); border-radius: 14px; padding: 14px 16px 16px; }
+  .x-stage h3 { font-size: 0.95rem; margin: 0 0 2px; }
+  .x-stage p { color: var(--muted); font-size: 0.8rem; margin: 0; }
+  .x-scroll { overflow-x: auto; }
+  .x-canvas { position: relative; width: 426px; height: 150px; }
+  .x-cell { position: absolute; top: 38px; width: 54px; height: 54px; border-radius: 10px; border: 2px solid var(--rule); display: grid; place-items: center; font-size: 1.3rem; font-weight: 700; background: var(--panel); z-index: 1; }
+  .x-cell.focus { border-color: var(--scene-focus); background: var(--scene-focus-soft); }
+  .x-cell.add { border-color: var(--scene-add); background: var(--scene-add-soft); }
+  .x-cell.remove { border-color: var(--scene-remove); background: var(--scene-remove-soft); }
+  .x-cell.dimmed { opacity: 0.4; }
+  .x-row-label { position: absolute; left: 0; top: 54px; font-size: 0.85rem; font-weight: 700; }
+  .x-frame { position: absolute; top: 30px; height: 70px; border: 3px solid var(--scene-frame); background: var(--scene-frame-soft); border-radius: 14px; }
+  .x-frame-label { position: absolute; top: 6px; font-size: 0.75rem; font-weight: 700; color: var(--scene-frame); }
+  .x-tag { position: absolute; top: 112px; translate: -50% 0; font-size: 0.72rem; font-weight: 700; padding: 1px 7px; border-radius: 5px; color: var(--panel); }
+  .x-tag.add { background: var(--scene-add); }
+  .x-tag.remove { background: var(--scene-remove); }
+  .x-chips { display: flex; gap: 8px; margin-top: 10px; }
+  .x-chip { font-size: 0.85rem; padding: 2px 9px; border-radius: 7px; border: 1.5px solid var(--rule); }
+  .x-chip.current { border-color: var(--ink); background: var(--paper); font-weight: 700; }
+  .x-chip.upcoming { opacity: 0.4; }
+  .x-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 14px 0; }
+  .x-counter { margin-left: auto; color: var(--muted); font-size: 0.8rem; }
+  .x-narration-row { display: grid; grid-template-columns: 1fr 150px; gap: 12px; }
+  .x-narration { background: var(--panel); border-left: 4px solid var(--ink); border-radius: 0 10px 10px 0; padding: 12px 14px; margin: 0; font-size: 0.9rem; }
+  .x-readout { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-content: start; }
+  .x-readout div { background: var(--panel); border: 1.5px solid var(--rule); border-radius: 10px; padding: 6px 8px; }
+  .x-readout dt { font-size: 0.7rem; color: var(--muted); }
+  .x-readout dd { margin: 0; font-weight: 700; }
+  .x-code-line { display: block; margin: 0 -16px; padding: 0 16px; }
+  .x-code-line.highlighted { background: var(--scene-frame-soft); }
+  .part { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--ink); color: var(--paper); font-size: 0.7rem; font-weight: 700; vertical-align: middle; margin-right: 6px; }
 </style>
 </head>
 <body>
@@ -129,14 +182,24 @@
   </section>
 
   <section class="section" id="signal">
-    <div class="section-title">Color · Signal</div>
-    <p class="note">Each signal color has one meaning across the site. <strong>Accent</strong> marks what is interactive: links and focus. <strong>Easy</strong>, <strong>medium</strong> and <strong>hard</strong> mark a problem's difficulty and nothing else. Every signal has a <strong>soft</strong> twin for the fill behind it; the strong color is the text or edge on top.</p>
+    <div class="section-title">Color · Hues &amp; roles</div>
+    <p class="note">Four <strong>hues</strong> hold the values; each has a <strong>soft</strong> twin for the fill behind it, and the strong hue is the text or edge on top. Code never names a hue. It names a <strong>role</strong>, and each role maps to one hue. Swatches read light strong, light soft, dark strong, dark soft.</p>
     <div class="grid grid-4">
-      <div><div class="swatch-pair"><div style="background:#23798a"></div><div style="background:#d3ecef"></div><div style="background:#56b7c8"></div><div style="background:#163338"></div></div><div class="swatch-name">accent · accent-soft</div><div class="swatch-value">#23798A #D3ECEF · #56B7C8 #163338</div><div class="swatch-use">links, focus ring</div></div>
-      <div><div class="swatch-pair"><div style="background:#3a8a4c"></div><div style="background:#d6eeda"></div><div style="background:#62bf74"></div><div style="background:#1b3522"></div></div><div class="swatch-name">easy · easy-soft</div><div class="swatch-value">#3A8A4C #D6EEDA · #62BF74 #1B3522</div><div class="swatch-use">Easy</div></div>
-      <div><div class="swatch-pair"><div style="background:#c98e00"></div><div style="background:#fbefc9"></div><div style="background:#f0b83a"></div><div style="background:#3b3117"></div></div><div class="swatch-name">medium · medium-soft</div><div class="swatch-value">#C98E00 #FBEFC9 · #F0B83A #3B3117</div><div class="swatch-use">Medium</div></div>
-      <div><div class="swatch-pair"><div style="background:#b8472f"></div><div style="background:#f6dcd5"></div><div style="background:#f08a70"></div><div style="background:#3c1f18"></div></div><div class="swatch-name">hard · hard-soft</div><div class="swatch-value">#B8472F #F6DCD5 · #F08A70 #3C1F18</div><div class="swatch-use">Hard</div></div>
+      <div><div class="swatch-pair"><div style="background:#23798a"></div><div style="background:#d3ecef"></div><div style="background:#56b7c8"></div><div style="background:#163338"></div></div><div class="swatch-name">teal · teal-soft</div><div class="swatch-value">#23798A #D3ECEF · #56B7C8 #163338</div></div>
+      <div><div class="swatch-pair"><div style="background:#3a8a4c"></div><div style="background:#d6eeda"></div><div style="background:#62bf74"></div><div style="background:#1b3522"></div></div><div class="swatch-name">green · green-soft</div><div class="swatch-value">#3A8A4C #D6EEDA · #62BF74 #1B3522</div></div>
+      <div><div class="swatch-pair"><div style="background:#c98e00"></div><div style="background:#fbefc9"></div><div style="background:#f0b83a"></div><div style="background:#3b3117"></div></div><div class="swatch-name">amber · amber-soft</div><div class="swatch-value">#C98E00 #FBEFC9 · #F0B83A #3B3117</div></div>
+      <div><div class="swatch-pair"><div style="background:#b8472f"></div><div style="background:#f6dcd5"></div><div style="background:#f08a70"></div><div style="background:#3c1f18"></div></div><div class="swatch-name">red · red-soft</div><div class="swatch-value">#B8472F #F6DCD5 · #F08A70 #3C1F18</div></div>
     </div>
+    <table class="spec panel">
+      <thead><tr><th>Role</th><th>Hue</th><th>Marks</th></tr></thead>
+      <tbody>
+        <tr><th>accent</th><td>teal</td><td>what is interactive: links, focus rings</td></tr>
+        <tr><th>easy · medium · hard</th><td>green · amber · red</td><td>a problem's difficulty, on the <a href="#components">badge</a></td></tr>
+        <tr><th>scene-focus</th><td>teal</td><td>in an <a href="#explainer">explainer</a>, the values the step is about</td></tr>
+        <tr><th>scene-add · scene-remove</th><td>green · red</td><td>in an explainer, a value entering or leaving</td></tr>
+        <tr><th>scene-frame</th><td>amber</td><td>in an explainer, the region under watch (a window); also the highlighted code line</td></tr>
+      </tbody>
+    </table>
   </section>
 
   <section class="section">
@@ -234,7 +297,7 @@
 
   <section class="section" id="problem-page">
     <div class="section-title">Page · Problem</div>
-    <p class="note">One page per problem, top to bottom: the title with its id, a meta line (difficulty badge, solved date, link to the statement), the tags, the complexity when given, the owner's notes, then one code block per solution file, headed by its file name. Files sort by name, so <code class="inline">attempt-1.py</code> comes before <code class="inline">solution.py</code>.</p>
+    <p class="note">One page per problem, top to bottom: the title with its id, a meta line (difficulty badge, solved date, link to the statement), the tags, the complexity when given, and the description in muted text. Then the <a href="#explainer">explainer</a> when the problem has one, one code block per solution file headed by its file name, and the owner's notes last. Files sort by name, so <code class="inline">attempt-1.py</code> comes before <code class="inline">solution.py</code>.</p>
     <div class="themes">
       <div class="stage theme-light mock">
         <div class="mock-header">learnleetcode</div>
@@ -242,12 +305,13 @@
         <p><span class="difficulty Medium">Medium</span> <span class="muted">· solved 2026-09-24 ·</span> <a href="#problem-page">Open on LeetCode</a></p>
         <p><span class="tag">sliding-window</span><span class="tag">string</span></p>
         <p>Time <code class="inline">O(n)</code> · Space <code class="inline">O(1)</code></p>
-        <h2>Notes</h2>
-        <p>The owner's notes, rendered from Markdown.</p>
+        <p class="muted">The problem's description, one short paragraph.</p>
         <h2>solution.py</h2>
         <pre class="code"><span class="k">class</span> <span class="f">Solution</span>:
     <span class="k">def</span> <span class="f">maxVowels</span>(self, s: <span class="t">str</span>, k: <span class="t">int</span>) -&gt; <span class="t">int</span>:
         <span class="c"># …</span></pre>
+        <h2>Notes</h2>
+        <p>The owner's notes, rendered from Markdown.</p>
       </div>
       <div class="stage theme-dark mock">
         <div class="mock-header">learnleetcode</div>
@@ -255,21 +319,111 @@
         <p><span class="difficulty Medium">Medium</span> <span class="muted">· solved 2026-09-24 ·</span> <a href="#problem-page">Open on LeetCode</a></p>
         <p><span class="tag">sliding-window</span><span class="tag">string</span></p>
         <p>Time <code class="inline">O(n)</code> · Space <code class="inline">O(1)</code></p>
-        <h2>Notes</h2>
-        <p>The owner's notes, rendered from Markdown.</p>
+        <p class="muted">The problem's description, one short paragraph.</p>
         <h2>solution.py</h2>
         <pre class="code"><span class="k">class</span> <span class="f">Solution</span>:
     <span class="k">def</span> <span class="f">maxVowels</span>(self, s: <span class="t">str</span>, k: <span class="t">int</span>) -&gt; <span class="t">int</span>:
         <span class="c"># …</span></pre>
+        <h2>Notes</h2>
+        <p>The owner's notes, rendered from Markdown.</p>
       </div>
     </div>
+  </section>
+
+  <section class="section" id="explainer">
+    <div class="section-title">Explainer</div>
+    <p class="note">An explainer is an animated walkthrough of one solution, stepped by the reader. Its layout is fixed; a problem supplies only the content. Top to bottom:</p>
+    <ul class="note">
+      <li><span class="part">1</span><strong>Examples</strong> — preset inputs, one pressed at a time; the first loads on open.</li>
+      <li><span class="part">2</span><strong>Your own input</strong> — the problem's fields and a Run button; a rejected input shows its reason in <code class="inline">scene-remove</code>.</li>
+      <li><span class="part">3</span><strong>Stages</strong> — one or more panels, each a title, a subtitle, a <strong>scene</strong> that scrolls sideways when wide, and an optional <strong>footer</strong> row of chips.</li>
+      <li><span class="part">4</span><strong>Controls</strong> — Restart, Back, Play/Pause, Next, and the step counter. Autoplay advances every 2 seconds and stops at the last step. <code class="inline">←</code> <code class="inline">→</code> step and <code class="inline">Space</code> plays.</li>
+      <li><span class="part">5</span><strong>Narration</strong> — what this step does, in prose.</li>
+      <li><span class="part">6</span><strong>Readout</strong> — the variables' values after this step.</li>
+      <li><span class="part">7</span><strong>Code highlight</strong> — the lines this step runs, marked in the solution's code block below the explainer.</li>
+    </ul>
+    <div class="themes">
+      <div class="stage theme-light">
+        <div class="caption">light</div>
+        <div class="x-examples"><span class="part">1</span><span class="x-example pressed">[4, 2, 7, 1, 9], k = 3<small>Example</small></span><span class="x-example">[5, 1, 3], k = 1<small>Edge case</small></span></div>
+        <div class="x-form"><span class="part">2</span>Your own array <span class="x-input">e.g. 4, 2, 7</span> k <span class="x-input" style="width:44px">2</span> <span class="x-button">Run</span></div>
+        <div class="x-stage">
+          <h3><span class="part">3</span>Stage title</h3>
+          <p>One line saying what this scene shows.</p>
+          <div class="x-scroll"><div class="x-canvas">
+            <div class="x-frame-label" style="left:156px">window, start 1</div>
+            <div class="x-frame" style="left:152px; width:192px"></div>
+            <div class="x-row-label">nums</div>
+            <div class="x-cell remove" style="left:96px">4</div>
+            <div class="x-cell" style="left:158px">2</div>
+            <div class="x-cell" style="left:220px">7</div>
+            <div class="x-cell add" style="left:282px">1</div>
+            <div class="x-cell dimmed" style="left:344px">9</div>
+            <div class="x-tag remove" style="left:123px">leaving</div>
+            <div class="x-tag add" style="left:309px">entering</div>
+          </div></div>
+          <div class="x-chips"><span class="x-chip current">(4, 1)</span><span class="x-chip upcoming">(2, 9)</span></div>
+        </div>
+        <div class="x-controls"><span class="part">4</span><span class="x-button">Restart</span><span class="x-button">Back</span><span class="x-button">Play</span><span class="x-button primary">Next</span><span class="x-counter">Step 3 of 5</span></div>
+        <div class="x-narration-row">
+          <p class="x-narration"><span class="part">5</span>Slide 1: <b>4</b> leaves, <b>1</b> enters, so window = 13 − 4 + 1 = <b>10</b>.</p>
+          <dl class="x-readout"><div><dt><span class="part">6</span>window</dt><dd>10</dd></div><div><dt>best</dt><dd>13</dd></div></dl>
+        </div>
+        <pre class="code" style="margin-top:14px"><span class="x-code-line">window = best = <span class="t">sum</span>(nums[:k])</span><span class="x-code-line"><span class="k">for</span> i <span class="k">in</span> <span class="t">range</span>(k, <span class="t">len</span>(nums)):</span><span class="x-code-line highlighted">    window += nums[i] - nums[i - k]  <span class="c"># 7</span></span></pre>
+      </div>
+      <div class="stage theme-dark">
+        <div class="caption">dark</div>
+        <div class="x-examples"><span class="part">1</span><span class="x-example pressed">[4, 2, 7, 1, 9], k = 3<small>Example</small></span><span class="x-example">[5, 1, 3], k = 1<small>Edge case</small></span></div>
+        <div class="x-form"><span class="part">2</span>Your own array <span class="x-input">e.g. 4, 2, 7</span> k <span class="x-input" style="width:44px">2</span> <span class="x-button">Run</span></div>
+        <div class="x-stage">
+          <h3><span class="part">3</span>Stage title</h3>
+          <p>One line saying what this scene shows.</p>
+          <div class="x-scroll"><div class="x-canvas">
+            <div class="x-frame-label" style="left:156px">window, start 1</div>
+            <div class="x-frame" style="left:152px; width:192px"></div>
+            <div class="x-row-label">nums</div>
+            <div class="x-cell remove" style="left:96px">4</div>
+            <div class="x-cell" style="left:158px">2</div>
+            <div class="x-cell" style="left:220px">7</div>
+            <div class="x-cell add" style="left:282px">1</div>
+            <div class="x-cell dimmed" style="left:344px">9</div>
+            <div class="x-tag remove" style="left:123px">leaving</div>
+            <div class="x-tag add" style="left:309px">entering</div>
+          </div></div>
+          <div class="x-chips"><span class="x-chip current">(4, 1)</span><span class="x-chip upcoming">(2, 9)</span></div>
+        </div>
+        <div class="x-controls"><span class="part">4</span><span class="x-button">Restart</span><span class="x-button">Back</span><span class="x-button">Play</span><span class="x-button primary">Next</span><span class="x-counter">Step 3 of 5</span></div>
+        <div class="x-narration-row">
+          <p class="x-narration"><span class="part">5</span>Slide 1: <b>4</b> leaves, <b>1</b> enters, so window = 13 − 4 + 1 = <b>10</b>.</p>
+          <dl class="x-readout"><div><dt><span class="part">6</span>window</dt><dd>10</dd></div><div><dt>best</dt><dd>13</dd></div></dl>
+        </div>
+        <pre class="code" style="margin-top:14px"><span class="x-code-line">window = best = <span class="t">sum</span>(nums[:k])</span><span class="x-code-line"><span class="k">for</span> i <span class="k">in</span> <span class="t">range</span>(k, <span class="t">len</span>(nums)):</span><span class="x-code-line highlighted">    window += nums[i] - nums[i - k]  <span class="c"># 7</span></span></pre>
+      </div>
+    </div>
+
+    <p class="note">A scene is drawn only from these <strong>building blocks</strong> (<code class="inline">src/explainer/scene.tsx</code>). Each is placed on a column grid: column <em>c</em> sits at 96 + 62·<em>c</em> px, leaving the first 96px for row labels. Changing a block's column or top between steps animates it there.</p>
+    <table class="spec panel">
+      <thead><tr><th>Block</th><th>Is</th><th>Shape</th></tr></thead>
+      <tbody>
+        <tr><th>Canvas</th><td>The scene's drawing area, sized to its columns</td><td>transparent; the stage panel is the surface</td></tr>
+        <tr><th>Cell</th><td>One value, such as an array element</td><td>54px square, radius 10, 2px rule edge; tone <em>plain</em>, <em>focus</em>, <em>add</em> or <em>remove</em> fills it with that role's soft color and edges it with the strong one; <em>dimmed</em> is 40% opacity</td></tr>
+        <tr><th>Row label</th><td>The name of a row of cells</td><td>bold, in the 96px gutter</td></tr>
+        <tr><th>Sub-label</th><td>A cell's index or origin, under it</td><td>0.72rem, muted, centered on the cell</td></tr>
+        <tr><th>Frame</th><td>The region under watch, such as a window</td><td><code class="inline">scene-frame</code> edge on its soft fill, radius 14, labelled above</td></tr>
+        <tr><th>Tag</th><td>A name pinned under one cell</td><td><code class="inline">scene-add</code> or <code class="inline">scene-remove</code> fill, panel-colored text</td></tr>
+        <tr><th>Column marker</th><td>The column the step reads, across rows</td><td>2.5px ink outline, radius 14, labelled above</td></tr>
+        <tr><th>Scene note</th><td>A short remark placed in the scene</td><td>0.78rem, muted</td></tr>
+        <tr><th>Chips</th><td>A stage footer's list of values, such as pairs</td><td><em>current</em> is bold on paper with an ink edge; <em>upcoming</em> is 40% opacity</td></tr>
+      </tbody>
+    </table>
   </section>
 
   <section class="section">
     <div class="section-title">Rules</div>
     <ul class="note">
       <li>A color comes from a token. A new need gets a new token here first, then in <code class="inline">Base.astro</code>.</li>
-      <li>A signal color keeps its one meaning. Difficulty colors never mark anything else.</li>
+      <li>Code names roles, never hues. A role keeps its one meaning: difficulty roles live on the badge, scene roles inside an explainer.</li>
+      <li>An explainer changes only its scene. Layout, controls, timing and styling belong to the skeleton.</li>
       <li>The theme follows the reader's system setting. Every change is checked in both themes.</li>
       <li>Code blocks keep GitHub's syntax colors on the panel fill.</li>
     </ul>

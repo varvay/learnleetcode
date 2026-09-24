@@ -12,6 +12,7 @@ const problems = defineCollection({
 	schema: z.object({
 		id: z.number().int().positive(),
 		title: z.string(),
+		description: z.string().optional(),
 		link: z.url(),
 		difficulty: z.enum(['Easy', 'Medium', 'Hard']),
 		tags: z.array(z.string()).default([]),

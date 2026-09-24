@@ -2,6 +2,7 @@
 import type { GetStaticPaths } from 'astro';
 import { Code } from 'astro:components';
 import { getCollection, render } from 'astro:content';
+import Explainer from '../../components/Explainer.astro';
 import Base from '../../layouts/Base.astro';
 
 export const getStaticPaths = (async () => {
@@ -9,12 +10,13 @@ export const getStaticPaths = (async () => {
 	return problems.map((problem) => ({ params: { slug: problem.id }, props: { problem } }));
 }) satisfies GetStaticPaths;
 
-// Every non-markdown file in a problem folder is shown as a solution.
-const sources = import.meta.glob<string>(['/problems/*/*', '!/problems/*/*.md'], {
+const sources = import.meta.glob<string>(['/problems/*/*', '!/problems/*/index.md', '!/problems/*/explainer.tsx'], {
 	query: '?raw',
 	import: 'default',
 	eager: true,
 });
+
+const explainerPaths = Object.keys(import.meta.glob('/problems/*/explainer.tsx'));
 
 const languages: Record<string, string> = {
 	py: 'python',
@@ -45,6 +47,8 @@ const solutions = Object.entries(sources)
 		return { name, code, lang: languages[ext] ?? 'plaintext' };
 	})
 	.sort((a, b) => a.name.localeCompare(b.name));
+
+const hasExplainer = explainerPaths.includes(`/problems/${problem.id}/explainer.tsx`);
 ---
 
 <Base title={`${data.id}. ${data.title}`}>
@@ -61,15 +65,26 @@ const solutions = Object.entries(sources)
 			</p>
 		)
 	}
+	{data.description && <p class="description">{data.description}</p>}
 
-	<Content />
+	{hasExplainer && <Explainer problemId={problem.id} />}
 
 	{
 		solutions.map((s) => (
-			<section>
+			<section data-code-file={s.name}>
 				<h2>{s.name}</h2>
 				<Code code={s.code} lang={s.lang as any} themes={{ light: 'github-light', dark: 'github-dark' }} />
 			</section>
 		))
 	}
+
+	<Content />
 </Base>
+
+<style>
+	.description {
+		color: var(--muted);
+		max-width: 64ch;
+		font-size: 1.05rem;
+	}
+</style>
