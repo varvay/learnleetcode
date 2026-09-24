@@ -1,0 +1,63 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url';
+
+const problems = (await getCollection('problems')).sort((a, b) => a.data.id - b.data.id);
+---
+
+<Base title="learnleetcode">
+	<h1>My LeetCode journey</h1>
+	<p>{problems.length} problem{problems.length === 1 ? '' : 's'} solved.</p>
+
+	<table>
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Title</th>
+				<th>Difficulty</th>
+				<th>Tags</th>
+				<th>Solved</th>
+			</tr>
+		</thead>
+		<tbody>
+			{
+				problems.map(({ id, data }) => (
+					<tr>
+						<td>{data.id}</td>
+						<td>
+							<a href={url(`/problems/${id}/`)}>{data.title}</a>
+						</td>
+						<td class={data.difficulty}>{data.difficulty}</td>
+						<td>
+							{data.tags.map((tag) => (
+								<span class="tag">{tag}</span>
+							))}
+						</td>
+						<td>{data.solved.toISOString().slice(0, 10)}</td>
+					</tr>
+				))
+			}
+		</tbody>
+	</table>
+</Base>
+
+<style>
+	table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+	th,
+	td {
+		text-align: left;
+		padding: 0.5rem;
+		border-bottom: 1px solid var(--border);
+		vertical-align: top;
+	}
+	@media (max-width: 600px) {
+		th:nth-child(4),
+		td:nth-child(4) {
+			display: none;
+		}
+	}
+</style>

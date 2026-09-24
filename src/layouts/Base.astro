@@ -1,0 +1,99 @@
+---
+import { url } from '../lib/url';
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
+		<link rel="icon" href={url('/favicon.ico')} />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body>
+		<header>
+			<a href={url('/')}>learnleetcode</a>
+		</header>
+		<main>
+			<slot />
+		</main>
+	</body>
+</html>
+
+<style is:global>
+	:root {
+		--bg: #ffffff;
+		--fg: #1f2328;
+		--muted: #656d76;
+		--border: #d0d7de;
+		--link: #0969da;
+		--easy: #1a7f37;
+		--medium: #9a6700;
+		--hard: #cf222e;
+		color-scheme: light dark;
+	}
+	@media (prefers-color-scheme: dark) {
+		:root {
+			--bg: #0d1117;
+			--fg: #e6edf3;
+			--muted: #8d96a0;
+			--border: #30363d;
+			--link: #4493f8;
+			--easy: #3fb950;
+			--medium: #d29922;
+			--hard: #f85149;
+		}
+		.astro-code,
+		.astro-code span {
+			color: var(--shiki-dark) !important;
+			background-color: var(--shiki-dark-bg) !important;
+		}
+	}
+	body {
+		margin: 0 auto;
+		max-width: 52rem;
+		padding: 0 1rem 4rem;
+		background: var(--bg);
+		color: var(--fg);
+		font: 16px/1.6 system-ui, sans-serif;
+	}
+	header {
+		padding: 1rem 0;
+		border-bottom: 1px solid var(--border);
+		margin-bottom: 1.5rem;
+	}
+	header a {
+		font-weight: 600;
+		color: var(--fg);
+		text-decoration: none;
+	}
+	a {
+		color: var(--link);
+	}
+	pre {
+		padding: 1rem;
+		border-radius: 6px;
+		border: 1px solid var(--border);
+		overflow-x: auto;
+		font-size: 14px;
+	}
+	.Easy { color: var(--easy); }
+	.Medium { color: var(--medium); }
+	.Hard { color: var(--hard); }
+	.tag {
+		display: inline-block;
+		padding: 0 0.5rem;
+		margin: 0 0.25rem 0.25rem 0;
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		font-size: 0.8rem;
+		color: var(--muted);
+	}
+</style>

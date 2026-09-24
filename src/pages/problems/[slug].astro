@@ -1,0 +1,76 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { Code } from 'astro:components';
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export const getStaticPaths = (async () => {
+	const problems = await getCollection('problems');
+	return problems.map((problem) => ({ params: { slug: problem.id }, props: { problem } }));
+}) satisfies GetStaticPaths;
+
+// Every non-markdown file in a problem folder is shown as a solution.
+const sources = import.meta.glob<string>(['/problems/*/*', '!/problems/*/*.md'], {
+	query: '?raw',
+	import: 'default',
+	eager: true,
+});
+
+const languages: Record<string, string> = {
+	py: 'python',
+	js: 'javascript',
+	ts: 'typescript',
+	java: 'java',
+	kt: 'kotlin',
+	cpp: 'cpp',
+	c: 'c',
+	cs: 'csharp',
+	go: 'go',
+	rs: 'rust',
+	swift: 'swift',
+	rb: 'ruby',
+	sql: 'sql',
+	sh: 'bash',
+};
+
+const { problem } = Astro.props;
+const { data } = problem;
+const { Content } = await render(problem);
+
+const solutions = Object.entries(sources)
+	.filter(([path]) => path.startsWith(`/problems/${problem.id}/`))
+	.map(([path, code]) => {
+		const name = path.split('/').pop()!;
+		const ext = name.split('.').pop()!;
+		return { name, code, lang: languages[ext] ?? 'plaintext' };
+	})
+	.sort((a, b) => a.name.localeCompare(b.name));
+---
+
+<Base title={`${data.id}. ${data.title}`}>
+	<h1>{data.id}. {data.title}</h1>
+	<p>
+		<span class={data.difficulty}>{data.difficulty}</span> ·
+		<a href={data.link}>Open on LeetCode</a> ·
+		solved {data.solved.toISOString().slice(0, 10)}
+	</p>
+	<p>{data.tags.map((tag) => <span class="tag">{tag}</span>)}</p>
+	{
+		data.complexity && (
+			<p>
+				Time <code>{data.complexity.time}</code> · Space <code>{data.complexity.space}</code>
+			</p>
+		)
+	}
+
+	<Content />
+
+	{
+		solutions.map((s) => (
+			<section>
+				<h2>{s.name}</h2>
+				<Code code={s.code} lang={s.lang as any} themes={{ light: 'github-light', dark: 'github-dark' }} />
+			</section>
+		))
+	}
+</Base>
