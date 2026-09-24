@@ -1,15 +1,16 @@
 ---
 import Player from '../explainer/Player';
+import type { Folder } from '../lib/folders';
 
 interface Props {
-	problemId: string;
+	folder: Folder;
 }
 
-const { problemId } = Astro.props;
+const { folder } = Astro.props;
 ---
 
 <section class="explainer">
-	<Player client:only="react" problemId={problemId} />
+	<Player client:only="react" folder={folder} />
 </section>
 
 <style is:global>

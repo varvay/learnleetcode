@@ -4,6 +4,7 @@ import Base from '../layouts/Base.astro';
 import { url } from '../lib/url';
 
 const problems = (await getCollection('problems')).sort((a, b) => a.data.id - b.data.id);
+const utilities = (await getCollection('utilities')).sort((a, b) => a.data.title.localeCompare(b.data.title));
 ---
 
 <Base title="learnleetcode">
@@ -44,6 +45,24 @@ const problems = (await getCollection('problems')).sort((a, b) => a.data.id - b.
 		</tbody>
 	</table>
 	</div>
+
+	{
+		utilities.length > 0 && (
+			<>
+				<h2>Utilities</h2>
+				<p class="muted">Concepts that outlive any one problem.</p>
+				<ul class="panel utilities">
+					{utilities.map(({ id, data }) => (
+						<li>
+							<a href={url(`/utilities/${id}/`)}>{data.title}</a>
+							{data.description && <p class="muted">{data.description}</p>}
+							{data.tags.length > 0 && <p>{data.tags.map((tag) => <span class="tag">{tag}</span>)}</p>}
+						</li>
+					))}
+				</ul>
+			</>
+		)
+	}
 </Base>
 
 <style>
@@ -72,6 +91,22 @@ const problems = (await getCollection('problems')).sort((a, b) => a.data.id - b.
 	td:last-child {
 		color: var(--muted);
 		white-space: nowrap;
+	}
+	.utilities {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.utilities li {
+		padding: 12px 14px;
+		border-bottom: 1.5px solid var(--rule);
+	}
+	.utilities li:last-child {
+		border-bottom: none;
+	}
+	.utilities p {
+		margin: 4px 0 0;
+		font-size: 0.9rem;
 	}
 	@media (max-width: 600px) {
 		th:nth-child(4),

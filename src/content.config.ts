@@ -26,4 +26,18 @@ const problems = defineCollection({
 	}),
 });
 
-export const collections = { problems };
+// Each utility lives in utilities/<slug>/index.md: a problem-agnostic concept, next to its code file(s).
+const utilities = defineCollection({
+	loader: glob({
+		base: './utilities',
+		pattern: '*/index.md',
+		generateId: ({ entry }) => entry.split('/')[0],
+	}),
+	schema: z.object({
+		title: z.string(),
+		description: z.string().optional(),
+		tags: z.array(z.string()).default([]),
+	}),
+});
+
+export const collections = { problems, utilities };

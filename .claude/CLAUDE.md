@@ -36,7 +36,7 @@ Create `problems/<id>-<leetcode-slug>/`:
 
 - `index.md` — frontmatter (including an optional `description`) and notes; the schema is in `src/content.config.ts`.
 - `explainer.tsx` (optional) — the animated walkthrough, a React island. It default-exports `defineExplainer({...})` from `src/explainer/types.ts`: examples, input fields and parsing, the step list, and one `Scene` component per stage (plus an optional `Footer`), drawn only from the building blocks in `src/explainer/scene.tsx`. A scene is a pure function of `input` and `step`; moving a block between steps animates it. The player (`src/explainer/Player.tsx`) and the layout and styles (`src/components/Explainer.astro`) are shared and stay fixed. `problems/643-maximum-average-subarray-i/explainer.tsx` is the reference.
-- every other file in the folder (`solution.py`, `attempt-1.py`, …) renders on the page as highlighted code; `src/pages/problems/[slug].astro` maps file extensions to languages. A step's `highlightedLines` are 1-based lines of the file named by the explainer's `codeFile`.
+- every other file in the folder (`solution.py`, `attempt-1.py`, …) renders on the page as highlighted code; `src/lib/folders.ts` maps file extensions to languages. A step's `highlightedLines` are 1-based lines of the file named by the explainer's `codeFile`.
 
 A problem page reads top to bottom: description, explainer, code, notes.
 
@@ -53,6 +53,10 @@ complexity:               # optional
   space: O(1)
 ---
 ```
+
+## Adding a utility
+
+A utility is a problem-agnostic concept, such as how Python's `zip` works. Create `utilities/<slug>/` with the same parts as a problem folder: `index.md`, an optional `explainer.tsx`, and code files. Its frontmatter is only `title`, an optional `description`, and `tags`. The page lives at `/utilities/<slug>/` and reads: tags, description, explainer, code, notes.
 
 ## UI design
 

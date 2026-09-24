@@ -1,54 +1,20 @@
 ---
 import type { GetStaticPaths } from 'astro';
-import { Code } from 'astro:components';
 import { getCollection, render } from 'astro:content';
 import Explainer from '../../components/Explainer.astro';
+import SourceFiles from '../../components/SourceFiles.astro';
 import Base from '../../layouts/Base.astro';
+import { hasExplainer, type Folder } from '../../lib/folders';
 
 export const getStaticPaths = (async () => {
 	const problems = await getCollection('problems');
 	return problems.map((problem) => ({ params: { slug: problem.id }, props: { problem } }));
 }) satisfies GetStaticPaths;
 
-const sources = import.meta.glob<string>(['/problems/*/*', '!/problems/*/index.md', '!/problems/*/explainer.tsx'], {
-	query: '?raw',
-	import: 'default',
-	eager: true,
-});
-
-const explainerPaths = Object.keys(import.meta.glob('/problems/*/explainer.tsx'));
-
-const languages: Record<string, string> = {
-	py: 'python',
-	js: 'javascript',
-	ts: 'typescript',
-	java: 'java',
-	kt: 'kotlin',
-	cpp: 'cpp',
-	c: 'c',
-	cs: 'csharp',
-	go: 'go',
-	rs: 'rust',
-	swift: 'swift',
-	rb: 'ruby',
-	sql: 'sql',
-	sh: 'bash',
-};
-
 const { problem } = Astro.props;
 const { data } = problem;
 const { Content } = await render(problem);
-
-const solutions = Object.entries(sources)
-	.filter(([path]) => path.startsWith(`/problems/${problem.id}/`))
-	.map(([path, code]) => {
-		const name = path.split('/').pop()!;
-		const ext = name.split('.').pop()!;
-		return { name, code, lang: languages[ext] ?? 'plaintext' };
-	})
-	.sort((a, b) => a.name.localeCompare(b.name));
-
-const hasExplainer = explainerPaths.includes(`/problems/${problem.id}/explainer.tsx`);
+const folder: Folder = `problems/${problem.id}`;
 ---
 
 <Base title={`${data.id}. ${data.title}`}>
@@ -67,24 +33,9 @@ const hasExplainer = explainerPaths.includes(`/problems/${problem.id}/explainer.
 	}
 	{data.description && <p class="description">{data.description}</p>}
 
-	{hasExplainer && <Explainer problemId={problem.id} />}
+	{hasExplainer(folder) && <Explainer folder={folder} />}
 
-	{
-		solutions.map((s) => (
-			<section data-code-file={s.name}>
-				<h2>{s.name}</h2>
-				<Code code={s.code} lang={s.lang as any} themes={{ light: 'github-light', dark: 'github-dark' }} />
-			</section>
-		))
-	}
+	<SourceFiles folder={folder} />
 
 	<Content />
 </Base>
-
-<style>
-	.description {
-		color: var(--muted);
-		max-width: 64ch;
-		font-size: 1.05rem;
-	}
-</style>

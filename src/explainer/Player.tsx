@@ -5,14 +5,17 @@ const AUTOPLAY_INTERVAL_MS = 2000;
 
 type AnyExplainer = Explainer<unknown, Step>;
 
-const explainerModules = import.meta.glob<{ default: AnyExplainer }>('/problems/*/explainer.tsx');
+const explainerModules = import.meta.glob<{ default: AnyExplainer }>([
+	'/problems/*/explainer.tsx',
+	'/utilities/*/explainer.tsx',
+]);
 
-export default function Player({ problemId }: { problemId: string }) {
+export default function Player({ folder }: { folder: string }) {
 	const [explainer, setExplainer] = useState<AnyExplainer>();
 
 	useEffect(() => {
-		explainerModules[`/problems/${problemId}/explainer.tsx`]().then((module) => setExplainer(() => module.default));
-	}, [problemId]);
+		explainerModules[`/${folder}/explainer.tsx`]().then((module) => setExplainer(() => module.default));
+	}, [folder]);
 
 	return explainer ? <Walkthrough explainer={explainer} /> : null;
 }
