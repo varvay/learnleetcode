@@ -51,6 +51,10 @@ complexity:               # optional
 ---
 ```
 
+## UI design
+
+[docs/ui-design.html](../docs/ui-design.html) is the UI spec: tokens, components, and page mocks in both themes. A UI change lands there first, as a mock, then in the site. Show mocks from it when discussing a design.
+
 ## Development
 
 - `npm run dev` serves at `localhost:4321/learnleetcode/`. Start it in background mode with `astro dev --background`, and manage it with `astro dev stop|status|logs`.

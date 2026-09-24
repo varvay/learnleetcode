@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>learnleetcode — UI Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* Tokens — the same values src/layouts/Base.astro ships. */
+  :root, .theme-light {
+    --paper: #eef1f4; --panel: #ffffff; --ink: #1d2a3a; --muted: #5b6878; --rule: #cbd3dc;
+    --accent: #23798a; --accent-soft: #d3ecef;
+    --easy: #3a8a4c;   --easy-soft: #d6eeda;
+    --medium: #c98e00; --medium-soft: #fbefc9;
+    --hard: #b8472f;   --hard-soft: #f6dcd5;
+    --font-ui: 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #131a23; --panel: #1b242f; --ink: #e5ebf1; --muted: #9ba8b6; --rule: #324050;
+      --accent: #56b7c8; --accent-soft: #163338;
+      --easy: #62bf74;   --easy-soft: #1b3522;
+      --medium: #f0b83a; --medium-soft: #3b3117;
+      --hard: #f08a70;   --hard-soft: #3c1f18;
+      color-scheme: dark;
+    }
+  }
+  .theme-dark {
+    --paper: #131a23; --panel: #1b242f; --ink: #e5ebf1; --muted: #9ba8b6; --rule: #324050;
+    --accent: #56b7c8; --accent-soft: #163338;
+    --easy: #62bf74;   --easy-soft: #1b3522;
+    --medium: #f0b83a; --medium-soft: #3b3117;
+    --hard: #f08a70;   --hard-soft: #3c1f18;
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-ui); font-size: 17px; line-height: 1.5; }
+
+  /* Doc chrome */
+  .page { max-width: 1040px; margin: 0 auto; padding: 48px 20px 96px; display: flex; flex-direction: column; gap: 56px; }
+  .brand { font-size: 1.4rem; font-weight: 700; }
+  .brand-sub { font-size: 0.85rem; color: var(--muted); margin-left: 8px; font-weight: 400; }
+  .lede { color: var(--muted); max-width: 64ch; margin: 10px 0 0; }
+  .section { display: flex; flex-direction: column; gap: 16px; }
+  .section-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding-bottom: 8px; border-bottom: 1.5px solid var(--rule); }
+  .note { margin: 0; max-width: 68ch; }
+  .note strong { font-weight: 700; }
+  .caption { font-size: 0.78rem; color: var(--muted); margin-bottom: 6px; }
+  .grid { display: grid; gap: 12px; }
+  .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  @media (max-width: 720px) { .grid-2, .grid-4, .grid-5 { grid-template-columns: minmax(0, 1fr); } }
+
+  .swatch-pair { display: flex; border: 1.5px solid var(--rule); border-radius: 10px; overflow: hidden; height: 52px; }
+  .swatch-pair > div { flex: 1; }
+  .swatch-name { font-weight: 700; font-size: 0.9rem; margin-top: 6px; }
+  .swatch-value, .meta { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); }
+  .swatch-use { font-size: 0.8rem; color: var(--muted); }
+
+  .specimen { padding: 4px 20px; }
+  .type-row { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; padding: 12px 0; border-bottom: 1.5px solid var(--rule); }
+  .type-row:last-child { border-bottom: none; }
+
+  .spec { width: 100%; border-collapse: collapse; }
+  .spec th, .spec td { text-align: left; padding: 10px 14px; border-bottom: 1.5px solid var(--rule); vertical-align: baseline; font-size: 0.9rem; }
+  .spec thead th { font-size: 0.78rem; color: var(--muted); }
+  .spec tbody th { white-space: nowrap; }
+  .spec tr:last-child th, .spec tr:last-child td { border-bottom: none; }
+
+  .themes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 860px) { .themes { grid-template-columns: minmax(0, 1fr); } }
+  .stage { background: var(--paper); color: var(--ink); border: 1.5px solid var(--rule); border-radius: 14px; padding: 20px; overflow: hidden; }
+  .theme-dark.stage { border-color: #324050; }
+  .shape-row { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; }
+  .shape { width: 72px; height: 48px; background: var(--panel); border: 1.5px solid var(--rule); }
+
+  /* Site components — mirror Base.astro and the page styles */
+  .panel { background: var(--panel); border: 1.5px solid var(--rule); border-radius: 14px; }
+  .muted { color: var(--muted); }
+  a { color: var(--accent); }
+  a:focus-visible, .focus { outline: 3px solid var(--accent); outline-offset: 2px; }
+  code.inline { font-family: var(--font-mono); background: var(--panel); border: 1.5px solid var(--rule); border-radius: 6px; padding: 0 5px; font-size: 0.9em; }
+  .difficulty { display: inline-block; padding: 1px 9px; border-radius: 6px; font-size: 0.85rem; font-weight: 700; }
+  .difficulty.Easy { color: var(--easy); background: var(--easy-soft); }
+  .difficulty.Medium { color: var(--medium); background: var(--medium-soft); }
+  .difficulty.Hard { color: var(--hard); background: var(--hard-soft); }
+  .tag { display: inline-block; padding: 1px 9px; margin: 0 4px 4px 0; border: 1.5px solid var(--rule); border-radius: 7px; font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
+  pre.code { font-family: var(--font-mono); background: var(--panel); border: 1.5px solid var(--rule); border-radius: 10px; padding: 14px 16px; overflow-x: auto; font-size: 0.88rem; line-height: 1.55; margin: 0; }
+  .k { color: #cf222e; } .f { color: #8250df; } .t { color: #0550ae; } .c { color: #6e7781; }
+  .theme-dark .k { color: #ff7b72; } .theme-dark .f { color: #d2a8ff; } .theme-dark .t { color: #79c0ff; } .theme-dark .c { color: #8b949e; }
+
+  .mock-header { font-weight: 700; color: var(--muted); font-size: 0.85rem; margin-bottom: 14px; }
+  .mock h1 { font-size: 1.5rem; line-height: 1.12; letter-spacing: -0.012em; margin: 0 0 8px; }
+  .mock h2 { font-size: 1rem; margin: 18px 0 6px; }
+  .mock p { margin: 0 0 10px; font-size: 0.92rem; }
+  .problems { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .problems th, .problems td { text-align: left; padding: 8px 10px; border-bottom: 1.5px solid var(--rule); vertical-align: top; }
+  .problems th { font-size: 0.72rem; color: var(--muted); }
+  .problems tbody tr:last-child td { border-bottom: none; }
+  .problems td:first-child, .problems td:last-child { color: var(--muted); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="brand">learnleetcode <span class="brand-sub">UI design</span></div>
+    <p class="lede">The visual language of the journal site: tokens, components, and the two pages. This page is the spec; <code class="inline">src/layouts/Base.astro</code> and the page styles implement it. Every mock shows the light and dark theme side by side.</p>
+  </header>
+
+  <!-- ─────────── FOUNDATIONS ─────────── -->
+
+  <section class="section">
+    <div class="section-title">Color · Neutrals</div>
+    <p class="note">Five neutrals build every surface. <strong>Paper</strong> is the page, <strong>panel</strong> is anything raised on it, <strong>rule</strong> is every border and divider. <strong>Ink</strong> is body text; <strong>muted</strong> is secondary text and metadata. Each swatch shows light on the left, dark on the right.</p>
+    <div class="grid grid-5">
+      <div><div class="swatch-pair"><div style="background:#eef1f4"></div><div style="background:#131a23"></div></div><div class="swatch-name">paper</div><div class="swatch-value">#EEF1F4 · #131A23</div><div class="swatch-use">page background</div></div>
+      <div><div class="swatch-pair"><div style="background:#ffffff"></div><div style="background:#1b242f"></div></div><div class="swatch-name">panel</div><div class="swatch-value">#FFFFFF · #1B242F</div><div class="swatch-use">tables, code, chips</div></div>
+      <div><div class="swatch-pair"><div style="background:#1d2a3a"></div><div style="background:#e5ebf1"></div></div><div class="swatch-name">ink</div><div class="swatch-value">#1D2A3A · #E5EBF1</div><div class="swatch-use">headings, body</div></div>
+      <div><div class="swatch-pair"><div style="background:#5b6878"></div><div style="background:#9ba8b6"></div></div><div class="swatch-name">muted</div><div class="swatch-value">#5B6878 · #9BA8B6</div><div class="swatch-use">metadata, labels</div></div>
+      <div><div class="swatch-pair"><div style="background:#cbd3dc"></div><div style="background:#324050"></div></div><div class="swatch-name">rule</div><div class="swatch-value">#CBD3DC · #324050</div><div class="swatch-use">borders, dividers</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="signal">
+    <div class="section-title">Color · Signal</div>
+    <p class="note">Each signal color has one meaning across the site. <strong>Accent</strong> marks what is interactive: links and focus. <strong>Easy</strong>, <strong>medium</strong> and <strong>hard</strong> mark a problem's difficulty and nothing else. Every signal has a <strong>soft</strong> twin for the fill behind it; the strong color is the text or edge on top.</p>
+    <div class="grid grid-4">
+      <div><div class="swatch-pair"><div style="background:#23798a"></div><div style="background:#d3ecef"></div><div style="background:#56b7c8"></div><div style="background:#163338"></div></div><div class="swatch-name">accent · accent-soft</div><div class="swatch-value">#23798A #D3ECEF · #56B7C8 #163338</div><div class="swatch-use">links, focus ring</div></div>
+      <div><div class="swatch-pair"><div style="background:#3a8a4c"></div><div style="background:#d6eeda"></div><div style="background:#62bf74"></div><div style="background:#1b3522"></div></div><div class="swatch-name">easy · easy-soft</div><div class="swatch-value">#3A8A4C #D6EEDA · #62BF74 #1B3522</div><div class="swatch-use">Easy</div></div>
+      <div><div class="swatch-pair"><div style="background:#c98e00"></div><div style="background:#fbefc9"></div><div style="background:#f0b83a"></div><div style="background:#3b3117"></div></div><div class="swatch-name">medium · medium-soft</div><div class="swatch-value">#C98E00 #FBEFC9 · #F0B83A #3B3117</div><div class="swatch-use">Medium</div></div>
+      <div><div class="swatch-pair"><div style="background:#b8472f"></div><div style="background:#f6dcd5"></div><div style="background:#f08a70"></div><div style="background:#3c1f18"></div></div><div class="swatch-name">hard · hard-soft</div><div class="swatch-value">#B8472F #F6DCD5 · #F08A70 #3C1F18</div><div class="swatch-use">Hard</div></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">Typography</div>
+    <p class="note">Two families. <strong>Atkinson Hyperlegible</strong> sets all prose and UI; it is built to keep look-alike characters apart (<code class="inline">0 O</code>, <code class="inline">1 l I</code>). The system <strong>monospace</strong> sets code, inline and in blocks. Body text is 17px at 1.5 line height; the rest of the ramp is relative to it.</p>
+    <div class="panel specimen">
+      <div class="type-row"><span style="font-size:2.3rem; font-weight:700; line-height:1.12; letter-spacing:-0.012em;">Page title</span><span class="meta">h1 · clamp(1.6rem, 4.2vw, 2.3rem) · 700</span></div>
+      <div class="type-row"><span style="font-size:1.15rem; font-weight:700;">Section heading</span><span class="meta">h2 · 1.15rem · 700</span></div>
+      <div class="type-row"><span>Body — notes, descriptions</span><span class="meta">17px · 400 · ink</span></div>
+      <div class="type-row"><span style="font-size:0.85rem; font-weight:700;">Difficulty badge</span><span class="meta">0.85rem · 700</span></div>
+      <div class="type-row"><span style="font-size:0.8rem;" class="muted">Tag, metadata</span><span class="meta">0.8rem · 400 · muted</span></div>
+      <div class="type-row"><span style="font-size:0.78rem; font-weight:700;" class="muted">Column label</span><span class="meta">0.78rem · 700 · muted</span></div>
+      <div class="type-row"><span style="font-family:var(--font-mono); font-size:0.88rem;">def maxVowels(self, s, k):</span><span class="meta">mono · 0.88rem · code block</span></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">Shape</div>
+    <p class="note">Every edge is a <strong>1.5px rule</strong>. Radius grows with the size of the thing: a chip is barely rounded, a panel is soft. The layout is one column, at most <strong>880px</strong> wide with a <strong>20px</strong> gutter.</p>
+    <div class="shape-row">
+      <div><div class="shape" style="border-radius:6px"></div><div class="meta">6 · badge, inline code</div></div>
+      <div><div class="shape" style="border-radius:7px"></div><div class="meta">7 · tag</div></div>
+      <div><div class="shape" style="border-radius:10px"></div><div class="meta">10 · code block</div></div>
+      <div><div class="shape" style="border-radius:14px"></div><div class="meta">14 · panel</div></div>
+    </div>
+  </section>
+
+  <!-- ─────────── COMPONENTS ─────────── -->
+
+  <section class="section" id="components">
+    <div class="section-title">Components</div>
+    <table class="spec panel">
+      <thead><tr><th>Component</th><th>Is</th><th>Shape</th></tr></thead>
+      <tbody>
+        <tr><th>Difficulty badge</th><td>A problem's difficulty, in its <a href="#signal">signal</a> color</td><td>strong text on the soft fill, radius 6, no border</td></tr>
+        <tr><th>Tag</th><td>One topic of a problem (<code class="inline">sliding-window</code>)</td><td>muted text, rule outline, radius 7</td></tr>
+        <tr><th>Link</th><td>Anything that navigates</td><td>accent, underlined; accent focus ring 3px, offset 2px</td></tr>
+        <tr><th>Inline code</th><td>A value or identifier in prose, such as a complexity</td><td>mono on panel, rule outline, radius 6</td></tr>
+        <tr><th>Code block</th><td>One solution file, syntax-highlighted</td><td>panel fill, rule outline, radius 10</td></tr>
+        <tr><th>Panel</th><td>A raised container, such as the problem table</td><td>panel fill, rule outline, radius 14</td></tr>
+      </tbody>
+    </table>
+    <div class="themes">
+      <div class="stage theme-light">
+        <div class="caption">light</div>
+        <p><span class="difficulty Easy">Easy</span> <span class="difficulty Medium">Medium</span> <span class="difficulty Hard">Hard</span></p>
+        <p><span class="tag">sliding-window</span><span class="tag">string</span><span class="tag">two-pointers</span></p>
+        <p><a href="#components">Open on LeetCode</a> · <a href="#components" class="focus">focused link</a></p>
+        <p>Time <code class="inline">O(n)</code> · Space <code class="inline">O(1)</code></p>
+      </div>
+      <div class="stage theme-dark">
+        <div class="caption">dark</div>
+        <p><span class="difficulty Easy">Easy</span> <span class="difficulty Medium">Medium</span> <span class="difficulty Hard">Hard</span></p>
+        <p><span class="tag">sliding-window</span><span class="tag">string</span><span class="tag">two-pointers</span></p>
+        <p><a href="#components">Open on LeetCode</a> · <a href="#components" class="focus">focused link</a></p>
+        <p>Time <code class="inline">O(n)</code> · Space <code class="inline">O(1)</code></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── PAGES ─────────── -->
+
+  <section class="section" id="index-page">
+    <div class="section-title">Page · Problem list</div>
+    <p class="note">The home page lists every problem in one panel, sorted by id. A row reads left to right as id, title, difficulty, tags, and the date it was solved. The title is the row's only link. The id and date are muted and never wrap; on narrow screens the tags column hides.</p>
+    <div class="themes">
+      <div class="stage theme-light mock">
+        <div class="mock-header">learnleetcode</div>
+        <h1>My LeetCode journey</h1>
+        <p class="muted">3 problems solved.</p>
+        <div class="panel"><table class="problems">
+          <thead><tr><th>#</th><th>Title</th><th>Difficulty</th><th>Tags</th><th>Solved</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><a href="#index-page">Two Sum</a></td><td><span class="difficulty Easy">Easy</span></td><td><span class="tag">hash-map</span></td><td>2026-09-20</td></tr>
+            <tr><td>42</td><td><a href="#index-page">Trapping Rain Water</a></td><td><span class="difficulty Hard">Hard</span></td><td><span class="tag">two-pointers</span></td><td>2026-09-22</td></tr>
+            <tr><td>1456</td><td><a href="#index-page">Maximum Number of Vowels…</a></td><td><span class="difficulty Medium">Medium</span></td><td><span class="tag">sliding-window</span></td><td>2026-09-24</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="stage theme-dark mock">
+        <div class="mock-header">learnleetcode</div>
+        <h1>My LeetCode journey</h1>
+        <p class="muted">3 problems solved.</p>
+        <div class="panel"><table class="problems">
+          <thead><tr><th>#</th><th>Title</th><th>Difficulty</th><th>Tags</th><th>Solved</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><a href="#index-page">Two Sum</a></td><td><span class="difficulty Easy">Easy</span></td><td><span class="tag">hash-map</span></td><td>2026-09-20</td></tr>
+            <tr><td>42</td><td><a href="#index-page">Trapping Rain Water</a></td><td><span class="difficulty Hard">Hard</span></td><td><span class="tag">two-pointers</span></td><td>2026-09-22</td></tr>
+            <tr><td>1456</td><td><a href="#index-page">Maximum Number of Vowels…</a></td><td><span class="difficulty Medium">Medium</span></td><td><span class="tag">sliding-window</span></td><td>2026-09-24</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="problem-page">
+    <div class="section-title">Page · Problem</div>
+    <p class="note">One page per problem, top to bottom: the title with its id, a meta line (difficulty badge, solved date, link to the statement), the tags, the complexity when given, the owner's notes, then one code block per solution file, headed by its file name. Files sort by name, so <code class="inline">attempt-1.py</code> comes before <code class="inline">solution.py</code>.</p>
+    <div class="themes">
+      <div class="stage theme-light mock">
+        <div class="mock-header">learnleetcode</div>
+        <h1>1456. Maximum Number of Vowels in a Substring of Given Length</h1>
+        <p><span class="difficulty Medium">Medium</span> <span class="muted">· solved 2026-09-24 ·</span> <a href="#problem-page">Open on LeetCode</a></p>
+        <p><span class="tag">sliding-window</span><span class="tag">string</span></p>
+        <p>Time <code class="inline">O(n)</code> · Space <code class="inline">O(1)</code></p>
+        <h2>Notes</h2>
+        <p>The owner's notes, rendered from Markdown.</p>
+        <h2>solution.py</h2>
+        <pre class="code"><span class="k">class</span> <span class="f">Solution</span>:
+    <span class="k">def</span> <span class="f">maxVowels</span>(self, s: <span class="t">str</span>, k: <span class="t">int</span>) -&gt; <span class="t">int</span>:
+        <span class="c"># …</span></pre>
+      </div>
+      <div class="stage theme-dark mock">
+        <div class="mock-header">learnleetcode</div>
+        <h1>1456. Maximum Number of Vowels in a Substring of Given Length</h1>
+        <p><span class="difficulty Medium">Medium</span> <span class="muted">· solved 2026-09-24 ·</span> <a href="#problem-page">Open on LeetCode</a></p>
+        <p><span class="tag">sliding-window</span><span class="tag">string</span></p>
+        <p>Time <code class="inline">O(n)</code> · Space <code class="inline">O(1)</code></p>
+        <h2>Notes</h2>
+        <p>The owner's notes, rendered from Markdown.</p>
+        <h2>solution.py</h2>
+        <pre class="code"><span class="k">class</span> <span class="f">Solution</span>:
+    <span class="k">def</span> <span class="f">maxVowels</span>(self, s: <span class="t">str</span>, k: <span class="t">int</span>) -&gt; <span class="t">int</span>:
+        <span class="c"># …</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">Rules</div>
+    <ul class="note">
+      <li>A color comes from a token. A new need gets a new token here first, then in <code class="inline">Base.astro</code>.</li>
+      <li>A signal color keeps its one meaning. Difficulty colors never mark anything else.</li>
+      <li>The theme follows the reader's system setting. Every change is checked in both themes.</li>
+      <li>Code blocks keep GitHub's syntax colors on the panel fill.</li>
+    </ul>
+  </section>
+
+</div>
+</body>
+</html>
