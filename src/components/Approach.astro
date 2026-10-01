@@ -1,0 +1,85 @@
+---
+import { getCollection, render } from 'astro:content';
+import { approachExplainersIn, type Folder } from '../lib/folders';
+import Explainer from './Explainer.astro';
+
+interface Props {
+	folder: Folder;
+}
+
+type RenderedContent = Awaited<ReturnType<typeof render>>['Content'];
+type TextPart = { kind: 'text'; fileName: string; title: string; Content: RenderedContent };
+type ExplainerPart = { kind: 'explainer'; fileName: string; file: string };
+type ApproachPart = TextPart | ExplainerPart;
+
+const { folder } = Astro.props;
+const fileNameOf = (path: string) => path.split('/').pop()!;
+
+const textEntries = await getCollection('approaches', (entry) => entry.id.startsWith(`${folder}/`));
+const textParts: TextPart[] = await Promise.all(
+	textEntries.map(async (entry) => ({
+		kind: 'text' as const,
+		fileName: fileNameOf(entry.id),
+		title: entry.data.title,
+		Content: (await render(entry)).Content,
+	})),
+);
+const explainerParts: ExplainerPart[] = approachExplainersIn(folder).map((file) => ({ kind: 'explainer', fileName: fileNameOf(file), file }));
+const parts: ApproachPart[] = [...textParts, ...explainerParts].sort((a, b) => a.fileName.localeCompare(b.fileName));
+---
+
+{
+	parts.length > 0 && (
+		<section class="approach">
+			<h2>How to get there</h2>
+			{parts.map((part) =>
+				part.kind === 'text' ? (
+					<section class="approach-text panel">
+						<h3>{part.title}</h3>
+						<part.Content />
+					</section>
+				) : (
+					<Explainer file={part.file} heading="h3" />
+				),
+			)}
+		</section>
+	)
+}
+
+<style is:global>
+	.approach-text {
+		padding: 16px 18px;
+		margin: 14px 0 28px;
+		overflow-x: auto;
+	}
+	.approach-text h3 {
+		font-size: 1.05rem;
+		margin: 0 0 6px;
+	}
+	.approach-text > :last-child {
+		margin-bottom: 0;
+	}
+	.approach-text table {
+		border-collapse: collapse;
+		font-size: 0.92rem;
+		min-width: 600px;
+	}
+	.approach-text th,
+	.approach-text td {
+		text-align: left;
+		vertical-align: baseline;
+		padding: 8px 12px;
+		border-bottom: 1.5px solid var(--rule);
+	}
+	.approach-text thead th {
+		font-size: 0.8rem;
+		color: var(--muted);
+	}
+	.approach-text tbody tr:last-child td {
+		border-bottom: none;
+	}
+	.approach-text td:nth-child(2),
+	.approach-text td:nth-child(3) {
+		white-space: nowrap;
+	}
+</style>

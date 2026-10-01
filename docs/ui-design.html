@@ -115,6 +115,13 @@
   .problems th { font-size: 0.72rem; color: var(--muted); }
   .problems tbody tr:last-child td { border-bottom: none; }
   .problems td:first-child, .problems td:last-child { color: var(--muted); white-space: nowrap; }
+  .approach-text { padding: 12px 14px; margin-bottom: 10px; }
+  .mock .approach-text h3 { font-size: 0.92rem; margin: 0 0 4px; }
+  .mock .approach-text p { font-size: 0.85rem; margin: 0 0 6px; }
+  .approach-text table { border-collapse: collapse; font-size: 0.78rem; }
+  .approach-text th, .approach-text td { text-align: left; padding: 4px 8px; border-bottom: 1.5px solid var(--rule); }
+  .approach-text th { color: var(--muted); }
+  .approach-slot { border: 1.5px dashed var(--rule); border-radius: 14px; padding: 10px 14px; font-size: 0.8rem; color: var(--muted); margin-bottom: 10px; }
   .utilities { list-style: none; margin: 0; padding: 0; font-size: 0.85rem; }
   .utilities li { padding: 10px 12px; border-bottom: 1.5px solid var(--rule); }
   .utilities li:last-child { border-bottom: none; }
@@ -244,6 +251,7 @@
         <tr><th>Inline code</th><td>A value or identifier in prose, such as a complexity</td><td>mono on panel, rule outline, radius 6</td></tr>
         <tr><th>Code block</th><td>One solution file, syntax-highlighted</td><td>panel fill, rule outline, radius 10</td></tr>
         <tr><th>Panel</th><td>A raised container, such as the problem table</td><td>panel fill, rule outline, radius 14</td></tr>
+        <tr><th>Approach box</th><td>One written step of the reasoning toward a solution</td><td>a panel with an h3 title over prose; tables inside take rule dividers and muted headers, and scroll sideways when narrower than 600px</td></tr>
       </tbody>
     </table>
     <div class="themes">
@@ -314,7 +322,7 @@
 
   <section class="section" id="problem-page">
     <div class="section-title">Page · Problem</div>
-    <p class="note">One page per problem, top to bottom: the title with its id, a meta line (difficulty badge, solved date, link to the statement), the tags, the complexity when given, and the description in muted text. Then the <a href="#explainer">explainer</a> when the problem has one, one code block per solution file headed by its file name, and the owner's notes last. Files sort by name, so <code class="inline">attempt-1.py</code> comes before <code class="inline">solution.py</code>.</p>
+    <p class="note">One page per problem, top to bottom: the title with its id, a meta line (difficulty badge, solved date, link to the statement), the tags, the complexity when given, and the description in muted text. Then <strong>How to get there</strong> when the problem has approach files: the reasoning that leads to the solution, as <a href="#components">approach boxes</a> and approach <a href="#explainer">explainers</a> in file-name order. Then the solution's explainer when the problem has one, one code block per solution file headed by its file name, and the owner's notes last. Files sort by name, so <code class="inline">attempt-1.py</code> comes before <code class="inline">solution.py</code>.</p>
     <div class="themes">
       <div class="stage theme-light mock">
         <div class="mock-header">learnleetcode</div>
@@ -323,6 +331,11 @@
         <p><span class="tag">sliding-window</span><span class="tag">string</span></p>
         <p>Time <code class="inline">O(n)</code> · Space <code class="inline">O(1)</code></p>
         <p class="muted">The problem's description, one short paragraph.</p>
+        <h2>How to get there</h2>
+        <div class="panel approach-text"><h3>Read the problem as a window</h3><p>One step of the reasoning, in prose.</p></div>
+        <div class="approach-slot">An approach explainer, laid out as in <a href="#explainer">Explainer</a>.</div>
+        <div class="panel approach-text"><h3>Alternatives compared</h3><table><thead><tr><th>Approach</th><th>Time</th><th>Space</th></tr></thead><tbody><tr><td>Brute force</td><td>O(n·k)</td><td>O(1)</td></tr><tr><td>Sliding window</td><td>O(n)</td><td>O(1)</td></tr></tbody></table></div>
+        <div class="approach-slot">The solution's explainer.</div>
         <h2>solution.py</h2>
         <pre class="code"><span class="k">class</span> <span class="f">Solution</span>:
     <span class="k">def</span> <span class="f">maxVowels</span>(self, s: <span class="t">str</span>, k: <span class="t">int</span>) -&gt; <span class="t">int</span>:
@@ -337,6 +350,11 @@
         <p><span class="tag">sliding-window</span><span class="tag">string</span></p>
         <p>Time <code class="inline">O(n)</code> · Space <code class="inline">O(1)</code></p>
         <p class="muted">The problem's description, one short paragraph.</p>
+        <h2>How to get there</h2>
+        <div class="panel approach-text"><h3>Read the problem as a window</h3><p>One step of the reasoning, in prose.</p></div>
+        <div class="approach-slot">An approach explainer, laid out as in <a href="#explainer">Explainer</a>.</div>
+        <div class="panel approach-text"><h3>Alternatives compared</h3><table><thead><tr><th>Approach</th><th>Time</th><th>Space</th></tr></thead><tbody><tr><td>Brute force</td><td>O(n·k)</td><td>O(1)</td></tr><tr><td>Sliding window</td><td>O(n)</td><td>O(1)</td></tr></tbody></table></div>
+        <div class="approach-slot">The solution's explainer.</div>
         <h2>solution.py</h2>
         <pre class="code"><span class="k">class</span> <span class="f">Solution</span>:
     <span class="k">def</span> <span class="f">maxVowels</span>(self, s: <span class="t">str</span>, k: <span class="t">int</span>) -&gt; <span class="t">int</span>:
@@ -349,7 +367,7 @@
 
   <section class="section" id="utility-page">
     <div class="section-title">Page · Utility</div>
-    <p class="note">A utility is a concept that holds across problems, such as how a language feature behaves. Its page is the <a href="#problem-page">problem page</a> without the LeetCode parts: the title, the tags, the description, the <a href="#explainer">explainer</a> when there is one, the code files, then the owner's notes.</p>
+    <p class="note">A utility is a concept that holds across problems, such as how a language feature behaves. Its page is the <a href="#problem-page">problem page</a> without the LeetCode parts: the title, the tags, the description, How to get there and the <a href="#explainer">explainer</a> when there are any, the code files, then the owner's notes.</p>
     <div class="themes">
       <div class="stage theme-light mock">
         <div class="mock-header">learnleetcode</div>
@@ -378,15 +396,15 @@
 
   <section class="section" id="explainer">
     <div class="section-title">Explainer</div>
-    <p class="note">An explainer is an animated walkthrough of one solution, stepped by the reader. Its layout is fixed; a problem supplies only the content. Top to bottom:</p>
+    <p class="note">An explainer is an animated walkthrough, stepped by the reader: of the solution, or of one approach under <a href="#problem-page">How to get there</a>. Its layout is fixed; a problem supplies only the content. Top to bottom:</p>
     <ul class="note">
       <li><span class="part">1</span><strong>Examples</strong> — preset inputs, one pressed at a time; the first loads on open.</li>
       <li><span class="part">2</span><strong>Your own input</strong> — the problem's fields and a Run button; a rejected input shows its reason in <code class="inline">scene-remove</code>.</li>
       <li><span class="part">3</span><strong>Stages</strong> — one or more panels, each a title, a subtitle, a <strong>scene</strong> that scrolls sideways when wide, and an optional <strong>footer</strong> row of chips.</li>
-      <li><span class="part">4</span><strong>Controls</strong> — Restart, Back, Play/Pause, Next, and the step counter. Autoplay advances every 2 seconds and stops at the last step. <code class="inline">←</code> <code class="inline">→</code> step and <code class="inline">Space</code> plays.</li>
+      <li><span class="part">4</span><strong>Controls</strong> — Restart, Back, Play/Pause, Next, and the step counter. Autoplay advances every 2 seconds and stops at the last step. <code class="inline">←</code> <code class="inline">→</code> step and <code class="inline">Space</code> plays, in the explainer last clicked or focused; before any, in the first on the page.</li>
       <li><span class="part">5</span><strong>Narration</strong> — what this step does, in prose.</li>
       <li><span class="part">6</span><strong>Readout</strong> — the variables' values after this step.</li>
-      <li><span class="part">7</span><strong>Code highlight</strong> — the lines this step runs, marked in the solution's code block below the explainer.</li>
+      <li><span class="part">7</span><strong>Code highlight</strong> — when the explainer names a code file, the lines this step runs, marked in that file's code block below the explainer.</li>
     </ul>
     <div class="themes">
       <div class="stage theme-light">

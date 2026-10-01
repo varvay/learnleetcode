@@ -5,7 +5,7 @@ export type Readout = Record<string, string | number>;
 export interface Step {
 	narration: string;
 	readout: Readout;
-	highlightedLines: number[];
+	highlightedLines?: number[];
 }
 
 export interface SceneProps<Input, S extends Step> {
@@ -36,7 +36,7 @@ export type ParsedInput<Input> = { input: Input } | { error: string };
 
 export interface Explainer<Input, S extends Step> {
 	title: string;
-	codeFile: string;
+	codeFile?: string;
 	stages: StageSpec<Input, S>[];
 	examples: Example<Input>[];
 	fields: InputField[];

@@ -7,11 +7,12 @@ export interface SourceFile {
 }
 
 const rawFiles = import.meta.glob<string>(
-	['/problems/*/*', '/utilities/*/*', '!/*/*/index.md', '!/*/*/explainer.tsx'],
+	['/problems/*/*', '/utilities/*/*', '!/*/*/index.md', '!/*/*/explainer.tsx', '!/*/*/approach-*'],
 	{ query: '?raw', import: 'default', eager: true },
 );
 
 const explainerPaths = Object.keys(import.meta.glob(['/problems/*/explainer.tsx', '/utilities/*/explainer.tsx']));
+const approachExplainerPaths = Object.keys(import.meta.glob(['/problems/*/approach-*.tsx', '/utilities/*/approach-*.tsx']));
 
 const languagesByExtension: Record<string, string> = {
 	py: 'python',
@@ -41,4 +42,8 @@ export function sourceFilesIn(folder: Folder): SourceFile[] {
 		.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-export const hasExplainer = (folder: Folder) => explainerPaths.includes(`/${folder}/explainer.tsx`);
+export const explainerPath = (folder: Folder) => `/${folder}/explainer.tsx`;
+
+export const hasExplainer = (folder: Folder) => explainerPaths.includes(explainerPath(folder));
+
+export const approachExplainersIn = (folder: Folder) => approachExplainerPaths.filter((path) => path.startsWith(`/${folder}/`));

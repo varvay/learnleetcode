@@ -1,24 +1,28 @@
 ---
-import Player from '../explainer/Player';
-import type { Folder } from '../lib/folders';
+import Player, { type TitleHeading } from '../explainer/Player';
 
 interface Props {
-	folder: Folder;
+	file: string;
+	heading?: TitleHeading;
 }
 
-const { folder } = Astro.props;
+const { file, heading = 'h2' } = Astro.props;
 ---
 
 <section class="explainer">
-	<Player client:only="react" folder={folder} />
+	<Player client:only="react" file={file} heading={heading} />
 </section>
 
 <style is:global>
 	.explainer {
 		margin: 28px 0;
 	}
-	.explainer h2 {
+	.explainer .explainer-title {
 		margin-top: 0;
+	}
+	.explainer h3.explainer-title {
+		font-size: 1.05rem;
+		margin-bottom: 10px;
 	}
 	.explainer .button {
 		font: inherit;

@@ -36,9 +36,10 @@ Create `problems/<id>-<leetcode-slug>/`:
 
 - `index.md` — frontmatter (including an optional `description`) and notes; the schema is in `src/content.config.ts`.
 - `explainer.tsx` (optional) — the animated walkthrough, a React island. It default-exports `defineExplainer({...})` from `src/explainer/types.ts`: examples, input fields and parsing, the step list, and one `Scene` component per stage (plus an optional `Footer`), drawn only from the building blocks in `src/explainer/scene.tsx`. A scene is a pure function of `input` and `step`; moving a block between steps animates it. The player (`src/explainer/Player.tsx`) and the layout and styles (`src/components/Explainer.astro`) are shared and stay fixed. `problems/643-maximum-average-subarray-i/explainer.tsx` is the reference.
-- every other file in the folder (`solution.py`, `attempt-1.py`, …) renders on the page as highlighted code; `src/lib/folders.ts` maps file extensions to languages. A step's `highlightedLines` are 1-based lines of the file named by the explainer's `codeFile`.
+- `approach-*.md` and `approach-*.tsx` (optional) — the reasoning that leads to the solution, shown under **How to get there** in file-name order (`approach-1-reframe.md`, `approach-2-brute-force.tsx`, …). An `.md` file is a text box: frontmatter `title`, then Markdown. A `.tsx` file is an explainer, like `explainer.tsx`. Use an explainer for a point that needs motion to land, and text for the rest.
+- every other file in the folder (`solution.py`, `attempt-1.py`, …) renders on the page as highlighted code; `src/lib/folders.ts` maps file extensions to languages. A step's `highlightedLines` are 1-based lines of the file named by the explainer's optional `codeFile`.
 
-A problem page reads top to bottom: description, explainer, code, notes.
+A problem page reads top to bottom: description, how to get there, explainer, code, notes. `problems/1004-max-consecutive-ones-iii/` is the reference for approach files.
 
 ```md
 ---
@@ -56,7 +57,7 @@ complexity:               # optional
 
 ## Adding a utility
 
-A utility is a problem-agnostic concept, such as how Python's `zip` works. Create `utilities/<slug>/` with the same parts as a problem folder: `index.md`, an optional `explainer.tsx`, and code files. Its frontmatter is only `title`, an optional `description`, and `tags`. The page lives at `/utilities/<slug>/` and reads: tags, description, explainer, code, notes.
+A utility is a problem-agnostic concept, such as how Python's `zip` works. Create `utilities/<slug>/` with the same parts as a problem folder: `index.md`, optional approach files and `explainer.tsx`, and code files. Its frontmatter is only `title`, an optional `description`, and `tags`. The page lives at `/utilities/<slug>/` and reads: tags, description, how to get there, explainer, code, notes.
 
 ## UI design
 

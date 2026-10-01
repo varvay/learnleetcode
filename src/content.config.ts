@@ -40,4 +40,16 @@ const utilities = defineCollection({
 	}),
 });
 
-export const collections = { problems, utilities };
+// Each approach box lives in <folder>/approach-*.md, next to the problem or utility it reasons toward.
+const approaches = defineCollection({
+	loader: glob({
+		base: '.',
+		pattern: ['problems/*/approach-*.md', 'utilities/*/approach-*.md'],
+		generateId: ({ entry }) => entry,
+	}),
+	schema: z.object({
+		title: z.string(),
+	}),
+});
+
+export const collections = { problems, utilities, approaches };

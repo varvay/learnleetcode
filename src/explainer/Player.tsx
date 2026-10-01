@@ -1,26 +1,34 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import type { Explainer, FieldValues, Step } from './types';
 
 const AUTOPLAY_INTERVAL_MS = 2000;
 
 type AnyExplainer = Explainer<unknown, Step>;
+export type TitleHeading = 'h2' | 'h3';
 
 const explainerModules = import.meta.glob<{ default: AnyExplainer }>([
 	'/problems/*/explainer.tsx',
+	'/problems/*/approach-*.tsx',
 	'/utilities/*/explainer.tsx',
+	'/utilities/*/approach-*.tsx',
 ]);
 
-export default function Player({ folder }: { folder: string }) {
+let keyboardOwner: HTMLElement | undefined;
+
+const ownsKeyboard = (player: HTMLElement) => player === (keyboardOwner ?? document.querySelector('[data-player]'));
+
+export default function Player({ file, heading }: { file: string; heading: TitleHeading }) {
 	const [explainer, setExplainer] = useState<AnyExplainer>();
 
 	useEffect(() => {
-		explainerModules[`/${folder}/explainer.tsx`]().then((module) => setExplainer(() => module.default));
-	}, [folder]);
+		explainerModules[file]().then((module) => setExplainer(() => module.default));
+	}, [file]);
 
-	return explainer ? <Walkthrough explainer={explainer} /> : null;
+	return explainer ? <Walkthrough explainer={explainer} heading={heading} /> : null;
 }
 
-function Walkthrough<Input, S extends Step>({ explainer }: { explainer: Explainer<Input, S> }) {
+function Walkthrough<Input, S extends Step>({ explainer, heading: Title }: { explainer: Explainer<Input, S>; heading: TitleHeading }) {
+	const player = useRef<HTMLDivElement>(null);
 	const [input, setInput] = useState(explainer.examples[0].input);
 	const [pressedExample, setPressedExample] = useState<number | undefined>(0);
 	const [stepIndex, setStepIndex] = useState(0);
@@ -67,14 +75,16 @@ function Walkthrough<Input, S extends Step>({ explainer }: { explainer: Explaine
 	}, [playing, stepIndex, lastStepIndex]);
 
 	useEffect(() => {
+		if (!explainer.codeFile) return;
+		const highlightedLines = step.highlightedLines ?? [];
 		const codeLines = document.querySelectorAll<HTMLElement>(`[data-code-file="${explainer.codeFile}"] .line`);
-		codeLines.forEach((line, index) => line.classList.toggle('highlighted', step.highlightedLines.includes(index + 1)));
+		codeLines.forEach((line, index) => line.classList.toggle('highlighted', highlightedLines.includes(index + 1)));
 	}, [explainer, step]);
 
 	useEffect(() => {
 		const onKeydown = (event: KeyboardEvent) => {
 			const target = event.target as HTMLElement;
-			if (target.tagName === 'INPUT') return;
+			if (target.tagName === 'INPUT' || !ownsKeyboard(player.current!)) return;
 			if (event.key === 'ArrowRight') stepBy(1);
 			else if (event.key === 'ArrowLeft') stepBy(-1);
 			else if (event.key === ' ' && target.tagName !== 'BUTTON') {
@@ -96,9 +106,13 @@ function Walkthrough<Input, S extends Step>({ explainer }: { explainer: Explaine
 		else load(parsed.input, undefined);
 	}
 
+	const claimKeyboard = () => {
+		keyboardOwner = player.current!;
+	};
+
 	return (
-		<>
-			<h2>{explainer.title}</h2>
+		<div data-player ref={player} onPointerDown={claimKeyboard} onFocus={claimKeyboard}>
+			<Title className="explainer-title">{explainer.title}</Title>
 
 			<div className="examples" role="group" aria-label="Examples">
 				{explainer.examples.map((example, index) => (
@@ -181,6 +195,6 @@ function Walkthrough<Input, S extends Step>({ explainer }: { explainer: Explaine
 					))}
 				</dl>
 			</div>
-		</>
+		</div>
 	);
 }

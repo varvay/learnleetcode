@@ -1,10 +1,11 @@
 ---
 import type { GetStaticPaths } from 'astro';
 import { getCollection, render } from 'astro:content';
+import Approach from '../../components/Approach.astro';
 import Explainer from '../../components/Explainer.astro';
 import SourceFiles from '../../components/SourceFiles.astro';
 import Base from '../../layouts/Base.astro';
-import { hasExplainer, type Folder } from '../../lib/folders';
+import { explainerPath, hasExplainer, type Folder } from '../../lib/folders';
 
 export const getStaticPaths = (async () => {
 	const utilities = await getCollection('utilities');
@@ -22,7 +23,9 @@ const folder: Folder = `utilities/${utility.id}`;
 	{data.tags.length > 0 && <p>{data.tags.map((tag) => <span class="tag">{tag}</span>)}</p>}
 	{data.description && <p class="description">{data.description}</p>}
 
-	{hasExplainer(folder) && <Explainer folder={folder} />}
+	<Approach folder={folder} />
+
+	{hasExplainer(folder) && <Explainer file={explainerPath(folder)} />}
 
 	<SourceFiles folder={folder} />
 
