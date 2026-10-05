@@ -1,12 +1,15 @@
 ---
-title: What the operations keep
+title: Find what the operations can't change
 ---
 
-Each operation changes something, so the useful question is what neither can change.
+**1. Try the operations by hand.** Swapping turns "abc" into "bca": the letters move, their counts stay. Transforming every a into b and every b into a turns "aacabb" into "bbcbaa": the letter a now has b's old count and b has a's. Searching through sequences of operations would never end, so look for what stays fixed instead.
 
-- **Swapping two characters** rearranges the word, so order never matters. Only how often each letter appears does.
-- **Transforming one letter into another, and back,** trades the counts of two letters that are already in the word. The set of letters stays the same, and so does the list of counts; only which letter holds which count changes.
+**2. List what neither operation changes.**
+- Swapping changes only order, so order never matters; how often each letter appears does.
+- Transforming trades the counts of two letters that are already in the word. The set of letters stays the same, and so does the list of counts; only which letter holds which count changes.
 
-So two words are close exactly when they use **the same letters** and have **the same counts, ignoring which letter has which**. Both conditions are also enough: the second operation hands each count to the right letter, and the first puts the letters in order. Equal length follows from equal counts, which makes it a cheap first check.
+**3. Check that those are also enough.** If two words use the same letters and the same counts, ignoring which letter has which, the transformation can hand each count to the right letter, and swaps then put the letters in order. So close means exactly: same letters, same count pattern. Equal length follows, which makes it a cheap first check.
 
-Comparing "the same counts, ignoring letters" means comparing two collections of counts. A second hashmap per word, from a count to how many letters have it, turns that into a key-by-key comparison.
+**4. Turn "same counts, ignoring letters" into something comparable.** Count each letter, then count how many letters have each count. Two words have the same pattern exactly when those second maps are equal.
+
+The reusable recipe: when operations can be applied any number of times, stop simulating them and find the invariants, the things no operation changes; then compare the invariants.
