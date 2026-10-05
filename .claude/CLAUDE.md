@@ -52,6 +52,7 @@ solved: 2026-09-24
 complexity:               # optional
   time: O(n)
   space: O(1)
+bookmark: Restudy this.   # optional: marks the problem to come back to, with why
 ---
 ```
 

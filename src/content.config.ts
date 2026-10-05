@@ -17,6 +17,7 @@ const problems = defineCollection({
 		difficulty: z.enum(['Easy', 'Medium', 'Hard']),
 		tags: z.array(z.string()).default([]),
 		solved: z.coerce.date(),
+		bookmark: z.string().optional(),
 		complexity: z
 			.object({
 				time: z.string(),

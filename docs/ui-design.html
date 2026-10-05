@@ -47,6 +47,7 @@
     --scene-add: var(--green);    --scene-add-soft: var(--green-soft);
     --scene-remove: var(--red);   --scene-remove-soft: var(--red-soft);
     --scene-frame: var(--amber);  --scene-frame-soft: var(--amber-soft);
+    --bookmark: var(--amber);     --bookmark-soft: var(--amber-soft);
   }
 
   *, *::before, *::after { box-sizing: border-box; }
@@ -126,6 +127,8 @@
   .entry-list li { padding: 10px 12px; border-bottom: 1.5px solid var(--rule); }
   .entry-list li:last-child { border-bottom: none; }
   .mock .entry-list p { margin: 3px 0 0; font-size: 0.8rem; }
+  .bookmarked { margin-bottom: 18px; }
+  .bookmark-callout { background: var(--bookmark-soft); border-left: 4px solid var(--bookmark); border-radius: 10px; padding: 10px 14px; }
 
   /* Explainer — mirrors src/components/Explainer.astro */
   .x-button { font: inherit; font-size: 0.85rem; font-weight: 700; color: var(--ink); background: var(--panel); border: 1.5px solid var(--ink); border-radius: 8px; padding: 6px 12px; }
@@ -211,6 +214,7 @@
         <tr><th>scene-focus</th><td>teal</td><td>in an <a href="#explainer">explainer</a>, the values the step is about</td></tr>
         <tr><th>scene-add · scene-remove</th><td>green · red</td><td>in an explainer, a value entering or leaving</td></tr>
         <tr><th>scene-frame</th><td>amber</td><td>in an explainer, the region under watch (a window); also the highlighted code line</td></tr>
+        <tr><th>bookmark</th><td>amber</td><td>a problem the owner marked to come back to, on its <a href="#components">callout</a></td></tr>
       </tbody>
     </table>
   </section>
@@ -254,6 +258,7 @@
         <tr><th>Code block</th><td>One solution file, syntax-highlighted</td><td>panel fill, rule outline, radius 10</td></tr>
         <tr><th>Panel</th><td>A raised container, such as the problem table</td><td>panel fill, rule outline, radius 14</td></tr>
         <tr><th>Approach box</th><td>One written step of the reasoning toward a solution</td><td>a panel with an h3 title over prose; tables inside take rule dividers and muted headers, and scroll sideways when narrower than 600px</td></tr>
+        <tr><th>Bookmark callout</th><td>A problem the owner marked to come back to, with the note why</td><td>bookmark-soft fill, 4px bookmark left edge, radius 10; a bold <em>Bookmarked</em>, then the note</td></tr>
       </tbody>
     </table>
     <div class="themes">
@@ -263,6 +268,7 @@
         <p><span class="tag">sliding-window</span><span class="tag">string</span><span class="tag">two-pointers</span></p>
         <p><a href="#components">Open on LeetCode</a> · <a href="#components" class="focus">focused link</a></p>
         <p>Time <code class="inline">O(n)</code> · Space <code class="inline">O(1)</code></p>
+        <p class="bookmark-callout"><strong>Bookmarked</strong> · Restudy this problem.</p>
       </div>
       <div class="stage theme-dark">
         <div class="caption">dark</div>
@@ -270,6 +276,7 @@
         <p><span class="tag">sliding-window</span><span class="tag">string</span><span class="tag">two-pointers</span></p>
         <p><a href="#components">Open on LeetCode</a> · <a href="#components" class="focus">focused link</a></p>
         <p>Time <code class="inline">O(n)</code> · Space <code class="inline">O(1)</code></p>
+        <p class="bookmark-callout"><strong>Bookmarked</strong> · Restudy this problem.</p>
       </div>
     </div>
   </section>
@@ -279,12 +286,17 @@
   <section class="section" id="index-page">
     <div class="section-title">Page · Problem list</div>
     <p class="note">The home page lists every problem in one panel, sorted by id. A row reads left to right as id, title, difficulty, tags, and the date it was solved. The title is the row's only link. The id and date are muted and never wrap; on narrow screens the tags column hides.</p>
+    <p class="note">Above it, <strong>Bookmarked</strong> lists every bookmarked problem in a panel, sorted by id: the id and title as a link, then the bookmark's note in muted text. The section appears once the first bookmark exists.</p>
     <p class="note">Below it, <strong>Concepts</strong> lists every <a href="#concept-page">concept</a>, then <strong>Utilities</strong> every <a href="#utility-page">utility</a>, each in its own panel sorted by title: the title as a link, the description in muted text, then the tags. Each section appears once its first entry exists.</p>
     <div class="themes">
       <div class="stage theme-light mock">
         <div class="mock-header">learnleetcode</div>
         <h1>My LeetCode journey</h1>
         <p class="muted">3 problems solved.</p>
+        <h2>Bookmarked</h2>
+        <ul class="panel entry-list bookmarked">
+          <li><a href="#index-page">42. Trapping Rain Water</a><p class="muted">Restudy the two-pointer version.</p></li>
+        </ul>
         <div class="panel"><table class="problems">
           <thead><tr><th>#</th><th>Title</th><th>Difficulty</th><th>Tags</th><th>Solved</th></tr></thead>
           <tbody>
@@ -309,6 +321,10 @@
         <div class="mock-header">learnleetcode</div>
         <h1>My LeetCode journey</h1>
         <p class="muted">3 problems solved.</p>
+        <h2>Bookmarked</h2>
+        <ul class="panel entry-list bookmarked">
+          <li><a href="#index-page">42. Trapping Rain Water</a><p class="muted">Restudy the two-pointer version.</p></li>
+        </ul>
         <div class="panel"><table class="problems">
           <thead><tr><th>#</th><th>Title</th><th>Difficulty</th><th>Tags</th><th>Solved</th></tr></thead>
           <tbody>
@@ -334,12 +350,13 @@
 
   <section class="section" id="problem-page">
     <div class="section-title">Page · Problem</div>
-    <p class="note">One page per problem, top to bottom: the title with its id, a meta line (difficulty badge, solved date, link to the statement), the tags, the complexity when given, and the description in muted text. Then <strong>How to get there</strong> when the problem has approach files: the reasoning that leads to the solution, as <a href="#components">approach boxes</a> and approach <a href="#explainer">explainers</a> in file-name order. Then the solution's explainer when the problem has one, one code block per solution file headed by its file name, and the owner's notes last. Files sort by name, so <code class="inline">attempt-1.py</code> comes before <code class="inline">solution.py</code>.</p>
+    <p class="note">One page per problem, top to bottom: the title with its id, a meta line (difficulty badge, solved date, link to the statement), the <a href="#components">bookmark callout</a> when the problem is bookmarked, the tags, the complexity when given, and the description in muted text. Then <strong>How to get there</strong> when the problem has approach files: the reasoning that leads to the solution, as <a href="#components">approach boxes</a> and approach <a href="#explainer">explainers</a> in file-name order. Then the solution's explainer when the problem has one, one code block per solution file headed by its file name, and the owner's notes last. Files sort by name, so <code class="inline">attempt-1.py</code> comes before <code class="inline">solution.py</code>.</p>
     <div class="themes">
       <div class="stage theme-light mock">
         <div class="mock-header">learnleetcode</div>
         <h1>1456. Maximum Number of Vowels in a Substring of Given Length</h1>
         <p><span class="difficulty Medium">Medium</span> <span class="muted">· solved 2026-09-24 ·</span> <a href="#problem-page">Open on LeetCode</a></p>
+        <p class="bookmark-callout"><strong>Bookmarked</strong> · The bookmark's note.</p>
         <p><span class="tag">sliding-window</span><span class="tag">string</span></p>
         <p>Time <code class="inline">O(n)</code> · Space <code class="inline">O(1)</code></p>
         <p class="muted">The problem's description, one short paragraph.</p>
@@ -359,6 +376,7 @@
         <div class="mock-header">learnleetcode</div>
         <h1>1456. Maximum Number of Vowels in a Substring of Given Length</h1>
         <p><span class="difficulty Medium">Medium</span> <span class="muted">· solved 2026-09-24 ·</span> <a href="#problem-page">Open on LeetCode</a></p>
+        <p class="bookmark-callout"><strong>Bookmarked</strong> · The bookmark's note.</p>
         <p><span class="tag">sliding-window</span><span class="tag">string</span></p>
         <p>Time <code class="inline">O(n)</code> · Space <code class="inline">O(1)</code></p>
         <p class="muted">The problem's description, one short paragraph.</p>
