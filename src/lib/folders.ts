@@ -1,4 +1,4 @@
-export type Folder = `problems/${string}` | `utilities/${string}`;
+export type Folder = `problems/${string}` | `concepts/${string}` | `utilities/${string}`;
 
 export interface SourceFile {
 	name: string;
@@ -7,12 +7,12 @@ export interface SourceFile {
 }
 
 const rawFiles = import.meta.glob<string>(
-	['/problems/*/*', '/utilities/*/*', '!/*/*/index.md', '!/*/*/explainer.tsx', '!/*/*/approach-*'],
+	['/problems/*/*', '/concepts/*/*', '/utilities/*/*', '!/*/*/index.md', '!/*/*/explainer.tsx', '!/*/*/approach-*'],
 	{ query: '?raw', import: 'default', eager: true },
 );
 
-const explainerPaths = Object.keys(import.meta.glob(['/problems/*/explainer.tsx', '/utilities/*/explainer.tsx']));
-const approachExplainerPaths = Object.keys(import.meta.glob(['/problems/*/approach-*.tsx', '/utilities/*/approach-*.tsx']));
+const explainerPaths = Object.keys(import.meta.glob(['/problems/*/explainer.tsx', '/concepts/*/explainer.tsx', '/utilities/*/explainer.tsx']));
+const approachExplainerPaths = Object.keys(import.meta.glob(['/problems/*/approach-*.tsx', '/concepts/*/approach-*.tsx', '/utilities/*/approach-*.tsx']));
 
 const languagesByExtension: Record<string, string> = {
 	py: 'python',

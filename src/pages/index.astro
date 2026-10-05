@@ -4,7 +4,12 @@ import Base from '../layouts/Base.astro';
 import { url } from '../lib/url';
 
 const problems = (await getCollection('problems')).sort((a, b) => a.data.id - b.data.id);
-const utilities = (await getCollection('utilities')).sort((a, b) => a.data.title.localeCompare(b.data.title));
+const byTitle = <Entry extends { data: { title: string } }>(entries: Entry[]) => entries.sort((a, b) => a.data.title.localeCompare(b.data.title));
+
+const topicSections = [
+	{ heading: 'Concepts', blurb: 'Algorithms and techniques that recur across problems.', basePath: 'concepts', entries: byTitle(await getCollection('concepts')) },
+	{ heading: 'Utilities', blurb: 'How language and library features behave.', basePath: 'utilities', entries: byTitle(await getCollection('utilities')) },
+];
 ---
 
 <Base title="learnleetcode">
@@ -47,20 +52,23 @@ const utilities = (await getCollection('utilities')).sort((a, b) => a.data.title
 	</div>
 
 	{
-		utilities.length > 0 && (
-			<>
-				<h2>Utilities</h2>
-				<p class="muted">Concepts that outlive any one problem.</p>
-				<ul class="panel utilities">
-					{utilities.map(({ id, data }) => (
-						<li>
-							<a href={url(`/utilities/${id}/`)}>{data.title}</a>
-							{data.description && <p class="muted">{data.description}</p>}
-							{data.tags.length > 0 && <p>{data.tags.map((tag) => <span class="tag">{tag}</span>)}</p>}
-						</li>
-					))}
-				</ul>
-			</>
+		topicSections.map(
+			({ heading, blurb, basePath, entries }) =>
+				entries.length > 0 && (
+					<>
+						<h2>{heading}</h2>
+						<p class="muted">{blurb}</p>
+						<ul class="panel entry-list">
+							{entries.map(({ id, data }) => (
+								<li>
+									<a href={url(`/${basePath}/${id}/`)}>{data.title}</a>
+									{data.description && <p class="muted">{data.description}</p>}
+									{data.tags.length > 0 && <p>{data.tags.map((tag) => <span class="tag">{tag}</span>)}</p>}
+								</li>
+							))}
+						</ul>
+					</>
+				),
 		)
 	}
 </Base>
@@ -92,19 +100,19 @@ const utilities = (await getCollection('utilities')).sort((a, b) => a.data.title
 		color: var(--muted);
 		white-space: nowrap;
 	}
-	.utilities {
+	.entry-list {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 	}
-	.utilities li {
+	.entry-list li {
 		padding: 12px 14px;
 		border-bottom: 1.5px solid var(--rule);
 	}
-	.utilities li:last-child {
+	.entry-list li:last-child {
 		border-bottom: none;
 	}
-	.utilities p {
+	.entry-list p {
 		margin: 4px 0 0;
 		font-size: 0.9rem;
 	}

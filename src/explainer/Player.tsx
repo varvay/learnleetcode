@@ -9,6 +9,8 @@ export type TitleHeading = 'h2' | 'h3';
 const explainerModules = import.meta.glob<{ default: AnyExplainer }>([
 	'/problems/*/explainer.tsx',
 	'/problems/*/approach-*.tsx',
+	'/concepts/*/explainer.tsx',
+	'/concepts/*/approach-*.tsx',
 	'/utilities/*/explainer.tsx',
 	'/utilities/*/approach-*.tsx',
 ]);

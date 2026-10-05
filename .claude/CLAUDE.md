@@ -57,7 +57,11 @@ complexity:               # optional
 
 ## Adding a utility
 
-A utility is a problem-agnostic concept, such as how Python's `zip` works. Create `utilities/<slug>/` with the same parts as a problem folder: `index.md`, optional approach files and `explainer.tsx`, and code files. Its frontmatter is only `title`, an optional `description`, and `tags`. The page lives at `/utilities/<slug>/` and reads: tags, description, how to get there, explainer, code, notes.
+A utility shows how a language or library feature behaves, such as Python's `zip`. Create `utilities/<slug>/` with the same parts as a problem folder: `index.md`, optional approach files and `explainer.tsx`, and code files. Its frontmatter is only `title`, an optional `description`, and `tags`. The page lives at `/utilities/<slug>/` and reads: tags, description, how to get there, explainer, code, notes.
+
+## Adding a concept
+
+A concept is an algorithm or technique that recurs across problems, such as depth-first search. Create `concepts/<slug>/` with the same parts and frontmatter as a utility; the page lives at `/concepts/<slug>/` and reads the same way.
 
 ## UI design
 

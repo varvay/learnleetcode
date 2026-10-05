@@ -122,10 +122,10 @@
   .approach-text th, .approach-text td { text-align: left; padding: 4px 8px; border-bottom: 1.5px solid var(--rule); }
   .approach-text th { color: var(--muted); }
   .approach-slot { border: 1.5px dashed var(--rule); border-radius: 14px; padding: 10px 14px; font-size: 0.8rem; color: var(--muted); margin-bottom: 10px; }
-  .utilities { list-style: none; margin: 0; padding: 0; font-size: 0.85rem; }
-  .utilities li { padding: 10px 12px; border-bottom: 1.5px solid var(--rule); }
-  .utilities li:last-child { border-bottom: none; }
-  .mock .utilities p { margin: 3px 0 0; font-size: 0.8rem; }
+  .entry-list { list-style: none; margin: 0; padding: 0; font-size: 0.85rem; }
+  .entry-list li { padding: 10px 12px; border-bottom: 1.5px solid var(--rule); }
+  .entry-list li:last-child { border-bottom: none; }
+  .mock .entry-list p { margin: 3px 0 0; font-size: 0.8rem; }
 
   /* Explainer — mirrors src/components/Explainer.astro */
   .x-button { font: inherit; font-size: 0.85rem; font-weight: 700; color: var(--ink); background: var(--panel); border: 1.5px solid var(--ink); border-radius: 8px; padding: 6px 12px; }
@@ -277,7 +277,7 @@
   <section class="section" id="index-page">
     <div class="section-title">Page · Problem list</div>
     <p class="note">The home page lists every problem in one panel, sorted by id. A row reads left to right as id, title, difficulty, tags, and the date it was solved. The title is the row's only link. The id and date are muted and never wrap; on narrow screens the tags column hides.</p>
-    <p class="note">Below it, <strong>Utilities</strong> lists every <a href="#utility-page">utility</a> in a second panel, sorted by title: the title as a link, the description in muted text, then the tags. The section appears once the first utility exists.</p>
+    <p class="note">Below it, <strong>Concepts</strong> lists every <a href="#concept-page">concept</a>, then <strong>Utilities</strong> every <a href="#utility-page">utility</a>, each in its own panel sorted by title: the title as a link, the description in muted text, then the tags. Each section appears once its first entry exists.</p>
     <div class="themes">
       <div class="stage theme-light mock">
         <div class="mock-header">learnleetcode</div>
@@ -291,11 +291,16 @@
             <tr><td>1456</td><td><a href="#index-page">Maximum Number of Vowels…</a></td><td><span class="difficulty Medium">Medium</span></td><td><span class="tag">sliding-window</span></td><td>2026-09-24</td></tr>
           </tbody>
         </table></div>
+        <h2>Concepts</h2>
+        <p class="muted">Algorithms and techniques that recur across problems.</p>
+        <ul class="panel entry-list">
+          <li><a href="#index-page">Breadth-first search</a><p class="muted">Visit the nearest nodes first, with a queue.</p><p><span class="tag">graph</span><span class="tag">queue</span></p></li>
+          <li><a href="#index-page">Depth-first search</a><p class="muted">Follow one path to its end, with a stack.</p><p><span class="tag">graph</span><span class="tag">stack</span></p></li>
+        </ul>
         <h2>Utilities</h2>
-        <p class="muted">Concepts that outlive any one problem.</p>
-        <ul class="panel utilities">
+        <p class="muted">How language and library features behave.</p>
+        <ul class="panel entry-list">
           <li><a href="#index-page">How Python's zip pairs lists</a><p class="muted">One pass over several lists, stopping at the shortest.</p><p><span class="tag">python</span></p></li>
-          <li><a href="#index-page">Prefix sums</a><p class="muted">Precompute running totals to answer any range sum in O(1).</p><p><span class="tag">array</span></p></li>
         </ul>
       </div>
       <div class="stage theme-dark mock">
@@ -310,11 +315,16 @@
             <tr><td>1456</td><td><a href="#index-page">Maximum Number of Vowels…</a></td><td><span class="difficulty Medium">Medium</span></td><td><span class="tag">sliding-window</span></td><td>2026-09-24</td></tr>
           </tbody>
         </table></div>
+        <h2>Concepts</h2>
+        <p class="muted">Algorithms and techniques that recur across problems.</p>
+        <ul class="panel entry-list">
+          <li><a href="#index-page">Breadth-first search</a><p class="muted">Visit the nearest nodes first, with a queue.</p><p><span class="tag">graph</span><span class="tag">queue</span></p></li>
+          <li><a href="#index-page">Depth-first search</a><p class="muted">Follow one path to its end, with a stack.</p><p><span class="tag">graph</span><span class="tag">stack</span></p></li>
+        </ul>
         <h2>Utilities</h2>
-        <p class="muted">Concepts that outlive any one problem.</p>
-        <ul class="panel utilities">
+        <p class="muted">How language and library features behave.</p>
+        <ul class="panel entry-list">
           <li><a href="#index-page">How Python's zip pairs lists</a><p class="muted">One pass over several lists, stopping at the shortest.</p><p><span class="tag">python</span></p></li>
-          <li><a href="#index-page">Prefix sums</a><p class="muted">Precompute running totals to answer any range sum in O(1).</p><p><span class="tag">array</span></p></li>
         </ul>
       </div>
     </div>
@@ -367,7 +377,7 @@
 
   <section class="section" id="utility-page">
     <div class="section-title">Page · Utility</div>
-    <p class="note">A utility is a concept that holds across problems, such as how a language feature behaves. Its page is the <a href="#problem-page">problem page</a> without the LeetCode parts: the title, the tags, the description, How to get there and the <a href="#explainer">explainer</a> when there are any, the code files, then the owner's notes.</p>
+    <p class="note">A utility shows how a language or library feature behaves, such as Python's <code class="inline">zip</code>. Its page is the <a href="#problem-page">problem page</a> without the LeetCode parts: the title, the tags, the description, How to get there and the <a href="#explainer">explainer</a> when there are any, the code files, then the owner's notes.</p>
     <div class="themes">
       <div class="stage theme-light mock">
         <div class="mock-header">learnleetcode</div>
@@ -388,6 +398,41 @@
         <h2>zip_demo.py</h2>
         <pre class="code"><span class="k">for</span> a, b <span class="k">in</span> <span class="t">zip</span>([1, 2, 3], <span class="f">"ab"</span>):
     <span class="t">print</span>(a, b)</pre>
+        <h2>Notes</h2>
+        <p>The owner's notes, rendered from Markdown.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="concept-page">
+    <div class="section-title">Page · Concept</div>
+    <p class="note">A concept is an algorithm or technique that recurs across problems, such as depth-first search. Its page has the <a href="#utility-page">utility page</a>'s layout: the title, the tags, the description, How to get there and the <a href="#explainer">explainer</a> when there are any, the code files, then the owner's notes.</p>
+    <div class="themes">
+      <div class="stage theme-light mock">
+        <div class="mock-header">learnleetcode</div>
+        <h1>Depth-first search</h1>
+        <p><span class="tag">graph</span><span class="tag">stack</span></p>
+        <p class="muted">Follow one path to its end, with a stack.</p>
+        <h2>How to get there</h2>
+        <div class="panel approach-text"><h3>Go deep, remember the way back</h3><p>One step of the reasoning, in prose.</p></div>
+        <div class="approach-slot">The concept's explainer.</div>
+        <h2>dfs_graph.py</h2>
+        <pre class="code"><span class="k">def</span> <span class="f">dfs</span>(graph: <span class="t">dict</span>, start: <span class="t">str</span>) -&gt; <span class="t">list</span>:
+    <span class="c"># …</span></pre>
+        <h2>Notes</h2>
+        <p>The owner's notes, rendered from Markdown.</p>
+      </div>
+      <div class="stage theme-dark mock">
+        <div class="mock-header">learnleetcode</div>
+        <h1>Depth-first search</h1>
+        <p><span class="tag">graph</span><span class="tag">stack</span></p>
+        <p class="muted">Follow one path to its end, with a stack.</p>
+        <h2>How to get there</h2>
+        <div class="panel approach-text"><h3>Go deep, remember the way back</h3><p>One step of the reasoning, in prose.</p></div>
+        <div class="approach-slot">The concept's explainer.</div>
+        <h2>dfs_graph.py</h2>
+        <pre class="code"><span class="k">def</span> <span class="f">dfs</span>(graph: <span class="t">dict</span>, start: <span class="t">str</span>) -&gt; <span class="t">list</span>:
+    <span class="c"># …</span></pre>
         <h2>Notes</h2>
         <p>The owner's notes, rendered from Markdown.</p>
       </div>

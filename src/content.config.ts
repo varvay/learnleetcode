@@ -26,25 +26,37 @@ const problems = defineCollection({
 	}),
 });
 
-// Each utility lives in utilities/<slug>/index.md: a problem-agnostic concept, next to its code file(s).
+const topicSchema = z.object({
+	title: z.string(),
+	description: z.string().optional(),
+	tags: z.array(z.string()).default([]),
+});
+
+// Each concept lives in concepts/<slug>/index.md: an algorithm or technique, next to its code file(s).
+const concepts = defineCollection({
+	loader: glob({
+		base: './concepts',
+		pattern: '*/index.md',
+		generateId: ({ entry }) => entry.split('/')[0],
+	}),
+	schema: topicSchema,
+});
+
+// Each utility lives in utilities/<slug>/index.md: how a language or library feature behaves, next to its code file(s).
 const utilities = defineCollection({
 	loader: glob({
 		base: './utilities',
 		pattern: '*/index.md',
 		generateId: ({ entry }) => entry.split('/')[0],
 	}),
-	schema: z.object({
-		title: z.string(),
-		description: z.string().optional(),
-		tags: z.array(z.string()).default([]),
-	}),
+	schema: topicSchema,
 });
 
-// Each approach box lives in <folder>/approach-*.md, next to the problem or utility it reasons toward.
+// Each approach box lives in <folder>/approach-*.md, next to the problem, concept or utility it reasons toward.
 const approaches = defineCollection({
 	loader: glob({
 		base: '.',
-		pattern: ['problems/*/approach-*.md', 'utilities/*/approach-*.md'],
+		pattern: ['problems/*/approach-*.md', 'concepts/*/approach-*.md', 'utilities/*/approach-*.md'],
 		generateId: ({ entry }) => entry,
 	}),
 	schema: z.object({
@@ -52,4 +64,4 @@ const approaches = defineCollection({
 	}),
 });
 
-export const collections = { problems, utilities, approaches };
+export const collections = { problems, concepts, utilities, approaches };
