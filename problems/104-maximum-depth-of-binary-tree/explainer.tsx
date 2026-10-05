@@ -1,4 +1,4 @@
-import { Canvas, Cell, RowLabel, SubLabel, type CellTone } from '../../src/explainer/scene';
+import { Canvas, Cell, Edge, RowLabel, SubLabel, type CellPlace, type CellTone } from '../../src/explainer/scene';
 import { defineExplainer, type SceneProps, type Step } from '../../src/explainer/types';
 
 type Slot = number | null;
@@ -136,6 +136,8 @@ function CallScene({ input: { slots }, step }: CallSceneProps) {
 	const { phase, node: current, calls, returned, deepestPath } = step;
 	const nodes = treeOf(slots);
 	const stackTop = TREE_TOP + Math.max(1, heightOf(nodes)) * LEVEL_GAP + STACK_GAP;
+	const placeOf = (id: number): CellPlace => ({ column: nodes[id].column, top: TREE_TOP + nodes[id].depth * LEVEL_GAP });
+	const childrenOf = (id: number) => [nodes[id].left, nodes[id].right].filter((child) => child !== NONE);
 
 	const toneOf = (id: number): CellTone => {
 		if (phase === 'done') return deepestPath.includes(id) ? 'focus' : 'plain';
@@ -153,6 +155,11 @@ function CallScene({ input: { slots }, step }: CallSceneProps) {
 				<SubLabel column={0} top={TREE_TOP + 18}>
 					None
 				</SubLabel>
+			)}
+			{nodes.flatMap((_, id) =>
+				childrenOf(id).map((child) => (
+					<Edge key={`edge-${child}`} from={placeOf(id)} to={placeOf(child)} tone={phase === 'done' && deepestPath.includes(child) ? 'focus' : 'plain'} />
+				)),
 			)}
 			{nodes.map((node, id) => {
 				const top = TREE_TOP + node.depth * LEVEL_GAP;

@@ -8,12 +8,18 @@ export const columnLeft = (column: number) => ROW_LABEL_GUTTER + column * CELL_P
 export const columnCenter = (column: number) => columnLeft(column) + CELL_SIZE / 2;
 
 export type CellTone = 'plain' | 'focus' | 'add' | 'remove';
+export type EdgeTone = 'plain' | 'focus';
 export type TagTone = 'add' | 'remove';
 export type ChipState = 'plain' | 'current' | 'upcoming';
 
 export interface Chip {
 	label: string;
 	state: ChipState;
+}
+
+export interface CellPlace {
+	column: number;
+	top: number;
 }
 
 const at = (left: number, top: number, hidden = false): CSSProperties => ({ left, top, ...(hidden && { opacity: 0 }) });
@@ -48,10 +54,30 @@ export function Cell({
 	);
 }
 
+const EDGE_GAP = 2;
+
+export function Edge({ from, to, tone = 'plain', hidden = false }: { from: CellPlace; to: CellPlace; tone?: EdgeTone; hidden?: boolean }) {
+	const centerX = columnCenter(from.column);
+	const centerY = from.top + CELL_SIZE / 2;
+	const deltaX = columnCenter(to.column) - centerX;
+	const deltaY = to.top + CELL_SIZE / 2 - centerY;
+	const distance = Math.hypot(deltaX, deltaY) || 1;
+	const directionX = deltaX / distance;
+	const directionY = deltaY / distance;
+	const inset = CELL_SIZE / 2 / Math.max(Math.abs(directionX), Math.abs(directionY)) + EDGE_GAP;
+	const length = Math.max(0, distance - 2 * inset);
+	return (
+		<div
+			className={`edge tone-${tone}`}
+			style={{ ...at(centerX + directionX * inset, centerY + directionY * inset, hidden || length === 0), width: length, rotate: `${Math.atan2(deltaY, deltaX)}rad` }}
+		/>
+	);
+}
+
 export function SubLabel({ column, top, hidden, children }: { column: number; top: number; hidden?: boolean; children: ReactNode }) {
 	return (
 		<div className="sub-label" style={at(columnLeft(column), top, hidden)}>
-			{children}
+			<span>{children}</span>
 		</div>
 	);
 }

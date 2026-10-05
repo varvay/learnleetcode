@@ -1,4 +1,4 @@
-import { Canvas, Cell, RowLabel, SubLabel, type CellTone } from '../../src/explainer/scene';
+import { Canvas, Cell, Edge, RowLabel, SubLabel, type CellPlace, type CellTone } from '../../src/explainer/scene';
 import { defineExplainer, type SceneProps, type Step } from '../../src/explainer/types';
 
 type Slot = number | null;
@@ -203,11 +203,14 @@ function TreeRows({ nodes, top, stackTop, stack, walked, matched, current, tone,
 		if (matched.includes(id)) return 'focus';
 		return 'plain';
 	};
+	const placeOf = (id: number): CellPlace => ({ column: nodes[id].column, top: top + nodes[id].depth * LEVEL_GAP });
+	const childrenOf = (id: number) => [nodes[id].left, nodes[id].right].filter((child) => child !== NONE);
 	return (
 		<>
 			<RowLabel top={top + 16}>
 				<code>{label}</code>
 			</RowLabel>
+			{nodes.flatMap((_, id) => childrenOf(id).map((child) => <Edge key={`${label}-edge-${child}`} from={placeOf(id)} to={placeOf(child)} />))}
 			{nodes.map((node, id) => (
 				<Cell
 					key={`${label}-node-${id}`}

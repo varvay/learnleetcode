@@ -176,6 +176,26 @@ const { file, heading = 'h2' } = Astro.props;
 	.explainer .cell.dimmed {
 		opacity: 0.4;
 	}
+	.explainer .edge {
+		position: absolute;
+		height: 2px;
+		margin-top: -1px;
+		background: var(--muted);
+		transform-origin: 0 50%;
+		z-index: 0;
+		transition:
+			left 0.7s cubic-bezier(0.45, 0, 0.2, 1),
+			top 0.7s cubic-bezier(0.45, 0, 0.2, 1),
+			width 0.7s cubic-bezier(0.45, 0, 0.2, 1),
+			rotate 0.7s cubic-bezier(0.45, 0, 0.2, 1),
+			opacity 0.4s,
+			background 0.3s;
+	}
+	.explainer .edge.tone-focus {
+		height: 3px;
+		margin-top: -1.5px;
+		background: var(--scene-focus);
+	}
 	.explainer .row-label {
 		position: absolute;
 		left: 0;
@@ -185,8 +205,14 @@ const { file, heading = 'h2' } = Astro.props;
 			opacity 0.4s,
 			top 0.7s;
 	}
+	.explainer .sub-label span {
+		background: var(--panel);
+		padding: 0 3px;
+		border-radius: 4px;
+	}
 	.explainer .sub-label {
 		position: absolute;
+		z-index: 1;
 		width: 54px;
 		text-align: center;
 		font-size: 0.72rem;

@@ -1,4 +1,4 @@
-import { Canvas, Cell, RowLabel, SubLabel, type CellTone } from '../../src/explainer/scene';
+import { Canvas, Cell, Edge, RowLabel, SubLabel, type CellPlace, type CellTone } from '../../src/explainer/scene';
 import { defineExplainer, type SceneProps, type Step } from '../../src/explainer/types';
 
 type Edge = [string, string];
@@ -35,6 +35,7 @@ const MAX_EDGES = 10;
 const GRAPH_TOP = 30;
 const LEVEL_GAP = 100;
 const LIST_GAP = 120;
+const GRAPH_SPREAD = 1.5;
 
 const LINES_INIT = [5, 6, 7];
 const LINES_TAKE = [9, 10, 11];
@@ -90,6 +91,7 @@ function layoutOf({ edges, start }: GraphInput): Layout {
 	return { column, level, levels: reachableLevels + (unreachable.length > 0 ? 1 : 0), width: Math.max(nextLeaf, unreachable.length), unreachable };
 }
 
+const graphPlaceOf = (layout: Layout, node: string): CellPlace => ({ column: layout.column.get(node)! * GRAPH_SPREAD, top: GRAPH_TOP + layout.level.get(node)! * LEVEL_GAP });
 const listTopOf = (layout: Layout) => GRAPH_TOP + layout.levels * LEVEL_GAP + 20;
 const listText = (items: string[]) => items.join(', ');
 const isOrAre = (items: string[]) => (items.length === 1 ? 'is' : 'are');
@@ -155,7 +157,7 @@ function buildSteps(input: GraphInput): WalkStep[] {
 	const missed = layout.unreachable.length > 0 ? ` ${listText(layout.unreachable)} ${isOrAre(layout.unreachable)} not reachable from ${start}, so the walk never sees ${layout.unreachable.length === 1 ? 'it' : 'them'}.` : '';
 	snapshot('done', '', [], [LINE_WHILE, LINE_RETURN], `The queue is empty, so every node reachable from ${start} is taken, nearest first: <b>${listText(taken)}</b>.${missed}`);
 
-	const columns = Math.max(layout.width, longest, taken.length);
+	const columns = Math.max((layout.width - 1) * GRAPH_SPREAD + 1, longest, taken.length);
 	return steps.map((step) => ({ ...step, columns }));
 }
 
@@ -185,9 +187,11 @@ function WalkScene({ input, step }: WalkSceneProps) {
 			<RowLabel top={unreachableTop + 16} hidden={layout.unreachable.length === 0}>
 				unreachable
 			</RowLabel>
+			{input.edges.map(([a, b]) => (
+				<Edge key={`edge-${a}-${b}`} from={graphPlaceOf(layout, a)} to={graphPlaceOf(layout, b)} />
+			))}
 			{[...graph.keys()].map((node) => {
-				const column = layout.column.get(node)!;
-				const top = GRAPH_TOP + layout.level.get(node)! * LEVEL_GAP;
+				const { column, top } = graphPlaceOf(layout, node);
 				return [
 					<Cell key={`node-${node}`} value={node} column={column} top={top} tone={nodeTone(node)} dimmed={layout.unreachable.includes(node)} />,
 					<SubLabel key={`neighbors-${node}`} column={column} top={top + 58}>

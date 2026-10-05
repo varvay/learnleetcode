@@ -143,10 +143,12 @@
   .x-scroll { overflow-x: auto; }
   .x-canvas { position: relative; width: 426px; height: 150px; }
   .x-cell { position: absolute; top: 38px; width: 54px; height: 54px; border-radius: 10px; border: 2px solid var(--rule); display: grid; place-items: center; font-size: 1.3rem; font-weight: 700; background: var(--panel); z-index: 1; }
-  .x-cell.focus { border-color: var(--scene-focus); background: var(--scene-focus-soft); }
+  .x-cell.tone-focus { border-color: var(--scene-focus); background: var(--scene-focus-soft); }
   .x-cell.add { border-color: var(--scene-add); background: var(--scene-add-soft); }
   .x-cell.remove { border-color: var(--scene-remove); background: var(--scene-remove-soft); }
   .x-cell.dimmed { opacity: 0.4; }
+  .x-edge { position: absolute; height: 2px; margin-top: -1px; background: var(--muted); transform-origin: 0 50%; z-index: 0; }
+  .x-edge.tone-focus { height: 3px; margin-top: -1.5px; background: var(--scene-focus); }
   .x-row-label { position: absolute; left: 0; top: 54px; font-size: 0.85rem; font-weight: 700; }
   .x-frame { position: absolute; top: 30px; height: 70px; border: 3px solid var(--scene-frame); background: var(--scene-frame-soft); border-radius: 14px; }
   .x-frame-label { position: absolute; top: 6px; font-size: 0.75rem; font-weight: 700; color: var(--scene-frame); }
@@ -517,7 +519,8 @@
         <tr><th>Canvas</th><td>The scene's drawing area, sized to its columns</td><td>transparent; the stage panel is the surface</td></tr>
         <tr><th>Cell</th><td>One value, such as an array element</td><td>54px square, radius 10, 2px rule edge; tone <em>plain</em>, <em>focus</em>, <em>add</em> or <em>remove</em> fills it with that role's soft color and edges it with the strong one; <em>dimmed</em> is 40% opacity</td></tr>
         <tr><th>Row label</th><td>The name of a row of cells</td><td>bold, in the 96px gutter</td></tr>
-        <tr><th>Sub-label</th><td>A cell's index or origin, under it</td><td>0.72rem, muted, centered on the cell</td></tr>
+        <tr><th>Sub-label</th><td>A cell's index or origin, under it</td><td>0.72rem, muted, centered on the cell; the text sits on a panel backing, so an edge passes behind it</td></tr>
+        <tr><th>Edge</th><td>A link between two cells, such as a tree's parent and child</td><td>2px muted line from cell edge to cell edge, stopping 2px short of each; tone <em>focus</em> draws it 3px in <code class="inline">scene-focus</code>, such as a highlighted path</td></tr>
         <tr><th>Frame</th><td>The region under watch, such as a window</td><td><code class="inline">scene-frame</code> edge on its soft fill, radius 14, labelled above</td></tr>
         <tr><th>Tag</th><td>A name pinned under one cell</td><td><code class="inline">scene-add</code> or <code class="inline">scene-remove</code> fill, panel-colored text</td></tr>
         <tr><th>Column marker</th><td>The column the step reads, across rows</td><td>2.5px ink outline, radius 14, labelled above</td></tr>
@@ -525,6 +528,29 @@
         <tr><th>Chips</th><td>A stage footer's list of values, such as pairs</td><td><em>current</em> is bold on paper with an ink edge; <em>upcoming</em> is 40% opacity</td></tr>
       </tbody>
     </table>
+    <p class="note">Edges are how a scene draws a tree or a graph: cells at their positions, joined by edges. One focus edge marks a path.</p>
+    <div class="themes">
+      <div class="stage theme-light">
+        <div class="caption">light</div>
+        <div class="x-canvas" style="height:160px">
+          <div class="x-edge tone-focus" style="left:162.9px; top:65.6px; width:28.9px; rotate:127.8deg"></div>
+          <div class="x-edge" style="left:207.1px; top:65.6px; width:28.9px; rotate:52.2deg"></div>
+          <div class="x-cell tone-focus" style="left:158px; top:10px">3</div>
+          <div class="x-cell tone-focus" style="left:96px; top:90px">9</div>
+          <div class="x-cell" style="left:220px; top:90px">20</div>
+        </div>
+      </div>
+      <div class="stage theme-dark">
+        <div class="caption">dark</div>
+        <div class="x-canvas" style="height:160px">
+          <div class="x-edge tone-focus" style="left:162.9px; top:65.6px; width:28.9px; rotate:127.8deg"></div>
+          <div class="x-edge" style="left:207.1px; top:65.6px; width:28.9px; rotate:52.2deg"></div>
+          <div class="x-cell tone-focus" style="left:158px; top:10px">3</div>
+          <div class="x-cell tone-focus" style="left:96px; top:90px">9</div>
+          <div class="x-cell" style="left:220px; top:90px">20</div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section class="section">
