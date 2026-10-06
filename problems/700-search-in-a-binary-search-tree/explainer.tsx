@@ -177,7 +177,11 @@ function parseSlots(text: string): Slot[] | string {
 	return slots;
 }
 
-const slotsOf = (text: string) => parseSlots(text) as Slot[];
+function slotsOf(text: string): Slot[] {
+	const slots = parseSlots(text);
+	if (typeof slots === 'string') throw new Error(`Invalid example [${text}]: ${slots}`);
+	return slots;
+}
 const BIG_TREE = '8, 4, 12, 2, 6, 10, 14, 1, 3, 5, 7';
 
 export default defineExplainer<SearchInput, WalkStep>({
