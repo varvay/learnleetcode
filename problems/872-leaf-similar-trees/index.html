@@ -1,0 +1,121 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/learnleetcode/favicon.svg"><link rel="icon" href="/learnleetcode/favicon.ico"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet"><meta name="generator" content="Astro v7.3.5"><title>872. Leaf-Similar Trees</title><link rel="stylesheet" href="/learnleetcode/_astro/SourceFiles.DSpMikYP.css"><style>:root{--paper:#eef1f4;--panel:#fff;--ink:#1d2a3a;--muted:#5b6878;--rule:#cbd3dc;--teal:#23798a;--teal-soft:#d3ecef;--green:#3a8a4c;--green-soft:#d6eeda;--amber:#c98e00;--amber-soft:#fbefc9;--red:#b8472f;--red-soft:#f6dcd5;--accent:var(--teal);--accent-soft:var(--teal-soft);--easy:var(--green);--easy-soft:var(--green-soft);--medium:var(--amber);--medium-soft:var(--amber-soft);--hard:var(--red);--hard-soft:var(--red-soft);--scene-focus:var(--teal);--scene-focus-soft:var(--teal-soft);--scene-add:var(--green);--scene-add-soft:var(--green-soft);--scene-remove:var(--red);--scene-remove-soft:var(--red-soft);--scene-frame:var(--amber);--scene-frame-soft:var(--amber-soft);--bookmark:var(--amber);--bookmark-soft:var(--amber-soft);color-scheme:light}@media (prefers-color-scheme:dark){:root{--paper:#131a23;--panel:#1b242f;--ink:#e5ebf1;--muted:#9ba8b6;--rule:#324050;--teal:#56b7c8;--teal-soft:#163338;--green:#62bf74;--green-soft:#1b3522;--amber:#f0b83a;--amber-soft:#3b3117;--red:#f08a70;--red-soft:#3c1f18;color-scheme:dark}.astro-code span{color:var(--shiki-dark)!important}}*,:before,:after{box-sizing:border-box}body{background:var(--paper);color:var(--ink);margin:0;font-family:Atkinson Hyperlegible,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:17px;line-height:1.5}header,main{max-width:880px;margin:0 auto;padding:0 20px}header{padding-top:20px}header a{color:var(--muted);font-weight:700;text-decoration:none}main{padding-top:24px;padding-bottom:56px}h1{letter-spacing:-.012em;margin:0 0 10px;font-size:clamp(1.6rem,4.2vw,2.3rem);line-height:1.12}h2{margin:28px 0 8px;font-size:1.15rem}a{color:var(--accent)}a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}.muted{color:var(--muted)}.description{color:var(--muted);max-width:64ch;font-size:1.05rem}.panel{background:var(--panel);border:1.5px solid var(--rule);border-radius:14px}pre.astro-code{border:1.5px solid var(--rule);border-radius:10px;padding:14px 16px;font-size:.88rem;line-height:1.55;overflow-x:auto;background:var(--panel)!important}:not(pre)>code{background:var(--panel);border:1.5px solid var(--rule);border-radius:6px;padding:0 5px;font-size:.9em}.difficulty{border-radius:6px;padding:1px 9px;font-size:.85rem;font-weight:700;display:inline-block}.difficulty.Easy{color:var(--easy);background:var(--easy-soft)}.difficulty.Medium{color:var(--medium);background:var(--medium-soft)}.difficulty.Hard{color:var(--hard);background:var(--hard-soft)}.tag{border:1.5px solid var(--rule);color:var(--muted);white-space:nowrap;border-radius:7px;margin:0 4px 4px 0;padding:1px 9px;font-size:.8rem;display:inline-block}
+.bookmark-callout[data-astro-cid-nbzpiwe6]{background:var(--bookmark-soft);border-left:4px solid var(--bookmark);border-radius:10px;padding:10px 14px}
+</style></head><body><header><a href="/learnleetcode/">learnleetcode</a></header><main><h1 data-astro-cid-nbzpiwe6>872. Leaf-Similar Trees</h1><p data-astro-cid-nbzpiwe6><span class="difficulty Easy" data-astro-cid-nbzpiwe6>Easy</span><span class="muted" data-astro-cid-nbzpiwe6>&nbsp;· solved 2026-10-05 ·&nbsp;</span><a href="https://leetcode.com/problems/leaf-similar-trees/" data-astro-cid-nbzpiwe6>Open on LeetCode</a></p><p data-astro-cid-nbzpiwe6><span class="tag" data-astro-cid-nbzpiwe6>tree</span><span class="tag" data-astro-cid-nbzpiwe6>binary-tree</span><span class="tag" data-astro-cid-nbzpiwe6>dfs</span></p><p data-astro-cid-nbzpiwe6>Time <code data-astro-cid-nbzpiwe6>O(n₁ + n₂)</code> · Space <code data-astro-cid-nbzpiwe6>O(h₁ + h₂)</code></p><section class="approach"><h2>How to get there</h2><section class="approach-text panel"><h3>Walk both trees in step, one leaf at a time</h3><p><strong>1. Restate what is compared.</strong> Only the leaves count, read left to right. Two trees of different shapes are leaf-similar when those sequences are equal.</p>
+<p><strong>2. Compare LeetCode’s first example by hand and find where the obvious way wastes memory.</strong> The trees have different shapes, but both have the leaves 6, 7, 4, 9, 8 in that order. The obvious way collects each tree’s leaves into a list and compares the lists. That stores every leaf of both trees, yet the comparison only ever looks at one pair at a time.</p>
+<p><strong>3. Find what to remember instead.</strong> Where each walk has got to, so it can be paused after a leaf and resumed for the next. A plain recursive function can’t hand back one leaf and resume later, but an explicit stack can: the stack is the walk’s place. One stack per tree, and the two walks take turns.</p>
+<p><strong>4. Make each walk reach its leaves left to right.</strong> A depth-first walk that pushes the right child before the left pops the left first, so it reaches leaves in left-to-right order.</p>
+<p><strong>5. Step the walks together.</strong> Every time tree 1’s walk reaches a leaf, advance tree 2’s walk to its next leaf and compare the two. A mismatch, or tree 2 running out first, settles it as <code>False</code>. When tree 1 is done, tree 2 must have no leaves left either.</p>
+<p><strong>6. Check the cost.</strong> Each node is pushed and popped once: O(n₁ + n₂) time. Each stack holds only the pending right children along one path, O(h₁ + h₂) space, and the walk stops at the first mismatch.</p>
+<p>The reusable recipe: to compare the sequences two walks produce, keep each walk’s own stack and advance them in turn, comparing as you go. Memory then follows the walks’ depth, not the sequences’ length.</p>
+</section><section class="approach-text panel"><h3>Let the stacks&#39; meaning settle the three exits</h3><table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Always means, at the top of the outer loop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>stack1</code>, <code>stack2</code></td>
+<td>the subtrees of each tree not yet walked, the leftmost on top</td>
+</tr>
+<tr>
+<td>the two walks</td>
+<td>have produced the same number of leaves so far, and they matched pair by pair</td>
+</tr>
+</tbody>
+</table>
+<p>Every node on a stack is the root of a subtree, and every subtree has at least one leaf. So a stack is empty exactly when its tree has no leaves left. That one fact decides all three exits:</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>What happened</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>if not stack2: return False</code></td>
+<td>tree 1 reached a leaf, and tree 2 has none left</td>
+<td>tree 1 has more leaves</td>
+</tr>
+<tr>
+<td><code>if current1.val != current2.val: return False</code></td>
+<td>the next leaves of the two trees differ</td>
+<td>the sequences differ</td>
+</tr>
+<tr>
+<td><code>return not stack2</code></td>
+<td>tree 1 has no leaves left</td>
+<td>similar only if tree 2 has none left either</td>
+</tr>
+</tbody>
+</table>
+<p>Inside the inner loop, <code>break</code> after a match returns to tree 1 with both walks one leaf further, so the second row of the first table holds again. The inner loop can never empty <code>stack2</code> without reaching a leaf, by the same fact.</p>
+<p>The method carries over: say what an empty stack means, and each exit follows from it.</p>
+</section><section class="approach-text panel"><h3>Alternatives compared</h3><table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Time</th>
+<th>Space</th>
+<th>How it works</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Collect both leaf lists</td>
+<td>O(n₁ + n₂)</td>
+<td>O(n₁ + n₂)</td>
+<td>Walk each tree fully, append its leaves to a list, and compare the lists.</td>
+</tr>
+<tr>
+<td><strong>Two stacks in lockstep</strong> (chosen, <code>solution.py</code>)</td>
+<td><strong>O(n₁ + n₂)</strong></td>
+<td><strong>O(h₁ + h₂)</strong></td>
+<td>Walk both trees with their own stacks, one leaf at a time, and stop at the first mismatch.</td>
+</tr>
+<tr>
+<td>Two leaf generators</td>
+<td>O(n₁ + n₂)</td>
+<td>O(h₁ + h₂)</td>
+<td>Write the walk once as a generator that yields each leaf, then compare the two generators pair by pair with <code>itertools.zip_longest</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>The lists are the simplest to write, but they hold every leaf and always walk both trees to the end. The stacks and the generators keep only each walk’s place; a generator writes the walk once, where the stacks write it twice.</p>
+</section></section><section class="explainer"><style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).only=e;window.dispatchEvent(new Event("astro:only"));})();</script><script>(()=>{var g=Object.defineProperty;var w=(a,s,c)=>s in a?g(a,s,{enumerable:!0,configurable:!0,writable:!0,value:c}):a[s]=c;var l=(a,s,c)=>w(a,typeof s!="symbol"?s+"":s,c);var E=new Set(["__proto__","constructor","prototype"]);{let a={0:t=>y(t),1:t=>c(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(c(t)),5:t=>new Set(c(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>Number.POSITIVE_INFINITY*t},s=t=>{let[p,e]=t;return p in a?a[p](e):void 0},c=t=>t.map(s),y=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([p,e])=>[p,s(e)]));class f extends HTMLElement{constructor(){super(...arguments);l(this,"Component");l(this,"hydrator");l(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let r=this.querySelectorAll("astro-slot"),n={},d=this.querySelectorAll("template[data-astro-template]");for(let o of d){let i=o.closest(this.tagName);i!=null&&i.isSameNode(this)&&(n[o.getAttribute("data-astro-template")||"default"]=o.innerHTML,o.remove())}for(let o of r){let i=o.closest(this.tagName);i!=null&&i.isSameNode(this)&&(n[o.getAttribute("name")||"default"]=o.innerHTML)}let u;try{u=this.hasAttribute("props")?y(JSON.parse(this.getAttribute("props"))):{}}catch(o){let i=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(i+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${i}`,this.getAttribute("props"),o),o}let h;await this.hydrator(this)(this.Component,u,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});l(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),r.disconnect(),this.childrenConnectedCallback()},r=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});r.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}getRetryImportUrl(e){let r=new URL(e,document.baseURI);return r.searchParams.set("astro-retry",Date.now().toString()),r.toString()}async importWithRetry(e){try{return await import(e)}catch(r){return await new Promise(n=>setTimeout(n,1e3)),import(this.getRetryImportUrl(e))}}handleHydrationError(e){let r=this.getAttribute("component-url"),n=new CustomEvent("astro:hydration-error",{cancelable:!0,bubbles:!0,composed:!0,detail:{error:e,componentUrl:r}});this.dispatchEvent(n)&&console.error(`[astro-island] Error hydrating ${r}`,e)}async start(){let e=JSON.parse(this.getAttribute("opts")),r=this.getAttribute("client");if(Astro[r]===void 0){window.addEventListener(`astro:${r}`,()=>this.start(),{once:!0});return}try{await Astro[r](async()=>{let n=this.getAttribute("renderer-url");try{let[d,{default:u}]=await Promise.all([this.importWithRetry(this.getAttribute("component-url")),n?this.importWithRetry(n):Promise.resolve({default:()=>()=>{}})]),h=this.getAttribute("component-export")||"default";if(h.includes(".")){this.Component=d;for(let m of h.split(".")){if(E.has(m)||!this.Component||typeof this.Component!="object"&&typeof this.Component!="function"||!Object.hasOwn(this.Component,m))throw new Error(`Invalid component export path: ${h}`);this.Component=this.Component[m]}}else{if(E.has(h))throw new Error(`Invalid component export path: ${h}`);this.Component=d[h]}return this.hydrator=u,this.hydrate}catch(d){return this.handleHydrationError(d),()=>{}}},e,this)}catch(n){this.handleHydrationError(n)}}attributeChangedCallback(){this.hydrate()}}l(f,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",f)}})();</script><astro-island uid="j8OL9" component-url="/learnleetcode/_astro/Player.CliBfzqr.js" component-export="default" renderer-url="/learnleetcode/_astro/client.CLhIxG29.js" props="{&quot;file&quot;:[0,&quot;/problems/872-leaf-similar-trees/explainer.tsx&quot;],&quot;heading&quot;:[0,&quot;h2&quot;]}" ssr client="only" opts="{&quot;name&quot;:&quot;Player&quot;,&quot;value&quot;:&quot;react&quot;}"></astro-island></section><section data-code-file="solution.py"><h2>solution.py</h2><pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># Definition for a binary tree node.</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># class TreeNode:</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#     def __init__(self, val=0, left=None, right=None):</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#         self.val = val</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#         self.left = left</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#         self.right = right</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">class</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> Solution</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> leafSimilar</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(self, root1: TreeNode </span><span style="color:#D73A49;--shiki-dark:#F97583">|</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> None</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, root2: TreeNode </span><span style="color:#D73A49;--shiki-dark:#F97583">|</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> None</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">bool</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        stack1, stack2 </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> [root1], [root2]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        while</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> stack1:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            current1 </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> stack1.pop()</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> current1.right:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                stack1.append(current1.right)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> current1.left:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                stack1.append(current1.left)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            if</span><span style="color:#D73A49;--shiki-dark:#F97583"> not</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> current1.left </span><span style="color:#D73A49;--shiki-dark:#F97583">and</span><span style="color:#D73A49;--shiki-dark:#F97583"> not</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> current1.right:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                if</span><span style="color:#D73A49;--shiki-dark:#F97583"> not</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> stack2:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                    return</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> False</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                while</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> stack2:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                    current2 </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> stack2.pop()</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> current2.right:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                        stack2.append(current2.right)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> current2.left:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                        stack2.append(current2.left)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                    if</span><span style="color:#D73A49;--shiki-dark:#F97583"> not</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> current2.left </span><span style="color:#D73A49;--shiki-dark:#F97583">and</span><span style="color:#D73A49;--shiki-dark:#F97583"> not</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> current2.right:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                        if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> current1.val </span><span style="color:#D73A49;--shiki-dark:#F97583">!=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> current2.val:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                            return</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> False</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                        else</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                            break</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#D73A49;--shiki-dark:#F97583"> not</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> stack2</span></span></code></pre></section><h2 id="notes">Notes</h2>
+<p><em>Write your approach, insights, and mistakes here. Any other file in this folder (e.g. <code>solution.py</code>, <code>attempt-1.py</code>) is rendered below as code.</em></p>
+</main></body></html>

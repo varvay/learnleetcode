@@ -1,0 +1,177 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/learnleetcode/favicon.svg"><link rel="icon" href="/learnleetcode/favicon.ico"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet"><meta name="generator" content="Astro v7.3.5"><title>Breadth-first search</title><link rel="stylesheet" href="/learnleetcode/_astro/SourceFiles.DSpMikYP.css"><style>:root{--paper:#eef1f4;--panel:#fff;--ink:#1d2a3a;--muted:#5b6878;--rule:#cbd3dc;--teal:#23798a;--teal-soft:#d3ecef;--green:#3a8a4c;--green-soft:#d6eeda;--amber:#c98e00;--amber-soft:#fbefc9;--red:#b8472f;--red-soft:#f6dcd5;--accent:var(--teal);--accent-soft:var(--teal-soft);--easy:var(--green);--easy-soft:var(--green-soft);--medium:var(--amber);--medium-soft:var(--amber-soft);--hard:var(--red);--hard-soft:var(--red-soft);--scene-focus:var(--teal);--scene-focus-soft:var(--teal-soft);--scene-add:var(--green);--scene-add-soft:var(--green-soft);--scene-remove:var(--red);--scene-remove-soft:var(--red-soft);--scene-frame:var(--amber);--scene-frame-soft:var(--amber-soft);--bookmark:var(--amber);--bookmark-soft:var(--amber-soft);color-scheme:light}@media (prefers-color-scheme:dark){:root{--paper:#131a23;--panel:#1b242f;--ink:#e5ebf1;--muted:#9ba8b6;--rule:#324050;--teal:#56b7c8;--teal-soft:#163338;--green:#62bf74;--green-soft:#1b3522;--amber:#f0b83a;--amber-soft:#3b3117;--red:#f08a70;--red-soft:#3c1f18;color-scheme:dark}.astro-code span{color:var(--shiki-dark)!important}}*,:before,:after{box-sizing:border-box}body{background:var(--paper);color:var(--ink);margin:0;font-family:Atkinson Hyperlegible,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:17px;line-height:1.5}header,main{max-width:880px;margin:0 auto;padding:0 20px}header{padding-top:20px}header a{color:var(--muted);font-weight:700;text-decoration:none}main{padding-top:24px;padding-bottom:56px}h1{letter-spacing:-.012em;margin:0 0 10px;font-size:clamp(1.6rem,4.2vw,2.3rem);line-height:1.12}h2{margin:28px 0 8px;font-size:1.15rem}a{color:var(--accent)}a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}.muted{color:var(--muted)}.description{color:var(--muted);max-width:64ch;font-size:1.05rem}.panel{background:var(--panel);border:1.5px solid var(--rule);border-radius:14px}pre.astro-code{border:1.5px solid var(--rule);border-radius:10px;padding:14px 16px;font-size:.88rem;line-height:1.55;overflow-x:auto;background:var(--panel)!important}:not(pre)>code{background:var(--panel);border:1.5px solid var(--rule);border-radius:6px;padding:0 5px;font-size:.9em}.difficulty{border-radius:6px;padding:1px 9px;font-size:.85rem;font-weight:700;display:inline-block}.difficulty.Easy{color:var(--easy);background:var(--easy-soft)}.difficulty.Medium{color:var(--medium);background:var(--medium-soft)}.difficulty.Hard{color:var(--hard);background:var(--hard-soft)}.tag{border:1.5px solid var(--rule);color:var(--muted);white-space:nowrap;border-radius:7px;margin:0 4px 4px 0;padding:1px 9px;font-size:.8rem;display:inline-block}
+</style></head><body><header><a href="/learnleetcode/">learnleetcode</a></header><main><h1>Breadth-first search</h1><p><span class="tag">graph</span><span class="tag">tree</span><span class="tag">queue</span></p><p class="description">Visit every node one step from the start, then every node two steps away, and so on outward. A queue keeps the nodes in the order they were found, which makes breadth-first search the tool for fewest-step paths and level-by-level work.</p><section class="approach"><h2>How to get there</h2><section class="approach-text panel"><h3>Nearest first, in a queue</h3><p><strong>1. State the job.</strong> Visit every node reachable from a start node, nearest first: every node one edge away, then every node two edges away, and so on. The graph is an adjacency list: <code>graph[node]</code> lists the node’s neighbors.</p>
+<p><strong>2. Walk it by hand and find where you get stuck.</strong> Take the graph with edges A–B, A–C, B–D, B–E, C–F, E–F, starting at A. One edge away are B and C; two edges away are D and E, through B, and F, through C. Visiting B finds D and E, but they have to wait: C was found earlier and is nearer, so it goes first.</p>
+<p><strong>3. Find what to remember.</strong> The nodes found but not yet visited, in the order they were found. First found, first visited is a queue. It is depth-first search’s loop with the stack swapped for a queue, and the walk goes wide instead of deep.</p>
+<p><strong>4. See why the order is by distance.</strong> The queue always holds nodes at some distance d, followed by nodes at distance d + 1. Taking a node at distance d adds only nodes at distance d + 1, at the back. So every node at distance d leaves before any node at d + 1.</p>
+<p><strong>5. Mark a node when it is found.</strong> F is found from C and again from E. Marking it visited when it joins the queue keeps it from joining twice. The first time a node is found is always through a shortest path, so nothing is lost.</p>
+<p><strong>6. Check the cost.</strong> Each node joins the queue once and each adjacency list is read once: O(V + E) time, and O(V) space for the queue and the visited set.</p>
+<p>The reusable recipe: when the nearest answers matter first, such as the fewest steps or one level at a time, explore with a queue and mark each node when it is found.</p>
+</section><section class="approach-text panel"><h3>Let the queue&#39;s meaning write the loop</h3><table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Always means, at the top of the loop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>queue</code></td>
+<td>nodes found but not yet taken, in the order found: nearer nodes ahead of farther ones</td>
+</tr>
+<tr>
+<td><code>visited</code></td>
+<td>every node found so far, taken or still waiting in the queue</td>
+</tr>
+<tr>
+<td><code>order</code></td>
+<td>the taken nodes, in the order they were taken</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>What happened</th>
+<th>What it keeps true</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>visited = {start}</code>, <code>queue = deque([start])</code></td>
+<td>the start is found</td>
+<td>it is visited and waiting</td>
+</tr>
+<tr>
+<td><code>node = queue.popleft()</code></td>
+<td>the earliest-found node leaves the front</td>
+<td>nearer nodes are taken first</td>
+</tr>
+<tr>
+<td><code>order.append(node)</code></td>
+<td>the node is taken</td>
+<td><code>order</code> gains it</td>
+</tr>
+<tr>
+<td><code>for neighbor in graph[node]:</code></td>
+<td>its neighbors are checked</td>
+<td></td>
+</tr>
+<tr>
+<td><code>if neighbor not in visited:</code></td>
+<td>a neighbor not yet found</td>
+<td></td>
+</tr>
+<tr>
+<td><code>visited.add(neighbor)</code>, <code>queue.append(neighbor)</code></td>
+<td>it is found now</td>
+<td>it waits at the back, behind every nearer node</td>
+</tr>
+<tr>
+<td><code>return order</code></td>
+<td>the queue is empty</td>
+<td>every node reachable from <code>start</code> is in <code>order</code>, nearest first</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why mark at append, not at popleft.</strong> Marking when a node is taken, as depth-first search does, gives the same order here, but a node can then join the queue more than once: on 2,000 random graphs, 923 queued at least one extra copy. Marking at append keeps each node in the queue once.</p>
+<p><code>deque</code> comes from <code>collections</code>. Its <code>popleft</code> takes O(1) time, while <code>list.pop(0)</code> shifts every remaining item and takes O(n).</p>
+<p>The method carries over: write down what the queue holds, then each line either takes the front node or adds newly found ones at the back.</p>
+</section><section class="approach-text panel"><h3>On a binary tree, one level at a time</h3><p>A tree is a graph with no cycles, so every node is found exactly once, from its parent. A LeetCode binary tree stores only <code>left</code> and <code>right</code> children, so the visited set goes away: append the children that exist, and the queue never sees a node twice.</p>
+<p>Tree problems often want the nodes grouped by level, such as level-order traversal or a tree’s depth. When a round of the loop starts, the queue holds exactly one whole level: every node at that depth, and nothing deeper. So <code>for _ in range(len(queue))</code> takes exactly that level, while the children it appends wait behind for the next round. That is <code>bfs_tree.py</code>; on the tree 1, with children 2 and 3, each with two children, it returns <code>[[1], [2, 3], [4, 5, 6, 7]]</code>.</p>
+<p>The reusable recipe: to work a tree level by level, read the queue’s length at the start of each round, and take exactly that many nodes.</p>
+</section><section class="approach-text panel"><h3>Alternatives compared</h3><table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Time</th>
+<th>Space</th>
+<th>How it works</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Queue, mark when found</strong> (<code>bfs_graph.py</code>)</td>
+<td><strong>O(V + E)</strong></td>
+<td><strong>O(V)</strong></td>
+<td>Take the front node and add its unfound neighbors at the back.</td>
+</tr>
+<tr>
+<td>Distances in place of visited (<code>bfs_shortest_paths.py</code>)</td>
+<td>O(V + E)</td>
+<td>O(V)</td>
+<td>The same loop with a dictionary: a node gets its distance when found, one more than the node that found it, and being in the dictionary means visited.</td>
+</tr>
+<tr>
+<td>Depth-first search</td>
+<td>O(V + E)</td>
+<td>O(V)</td>
+<td>The same loop with a stack: it reaches the same nodes, deepest first, with no distance order.</td>
+</tr>
+<tr>
+<td>Dijkstra’s algorithm</td>
+<td>O((V + E) log V)</td>
+<td>O(V)</td>
+<td>For weighted edges: a priority queue takes the node with the smallest total weight so far, where breadth-first search counts edges.</td>
+</tr>
+</tbody>
+</table>
+<p>Breadth-first search finds the fewest edges, which is the shortest path only when every edge costs the same. With weights, a path of more edges can be cheaper, and Dijkstra’s algorithm takes over.</p>
+<p>Pick breadth-first search when the answer is about distance or levels: the fewest moves, the nearest target, or a tree one level at a time. Pick depth-first search when the answer depends on whole paths or subtrees.</p>
+</section></section><section class="explainer"><style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).only=e;window.dispatchEvent(new Event("astro:only"));})();</script><script>(()=>{var g=Object.defineProperty;var w=(a,s,c)=>s in a?g(a,s,{enumerable:!0,configurable:!0,writable:!0,value:c}):a[s]=c;var l=(a,s,c)=>w(a,typeof s!="symbol"?s+"":s,c);var E=new Set(["__proto__","constructor","prototype"]);{let a={0:t=>y(t),1:t=>c(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(c(t)),5:t=>new Set(c(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>Number.POSITIVE_INFINITY*t},s=t=>{let[p,e]=t;return p in a?a[p](e):void 0},c=t=>t.map(s),y=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([p,e])=>[p,s(e)]));class f extends HTMLElement{constructor(){super(...arguments);l(this,"Component");l(this,"hydrator");l(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let r=this.querySelectorAll("astro-slot"),n={},d=this.querySelectorAll("template[data-astro-template]");for(let o of d){let i=o.closest(this.tagName);i!=null&&i.isSameNode(this)&&(n[o.getAttribute("data-astro-template")||"default"]=o.innerHTML,o.remove())}for(let o of r){let i=o.closest(this.tagName);i!=null&&i.isSameNode(this)&&(n[o.getAttribute("name")||"default"]=o.innerHTML)}let u;try{u=this.hasAttribute("props")?y(JSON.parse(this.getAttribute("props"))):{}}catch(o){let i=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(i+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${i}`,this.getAttribute("props"),o),o}let h;await this.hydrator(this)(this.Component,u,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});l(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),r.disconnect(),this.childrenConnectedCallback()},r=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});r.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}getRetryImportUrl(e){let r=new URL(e,document.baseURI);return r.searchParams.set("astro-retry",Date.now().toString()),r.toString()}async importWithRetry(e){try{return await import(e)}catch(r){return await new Promise(n=>setTimeout(n,1e3)),import(this.getRetryImportUrl(e))}}handleHydrationError(e){let r=this.getAttribute("component-url"),n=new CustomEvent("astro:hydration-error",{cancelable:!0,bubbles:!0,composed:!0,detail:{error:e,componentUrl:r}});this.dispatchEvent(n)&&console.error(`[astro-island] Error hydrating ${r}`,e)}async start(){let e=JSON.parse(this.getAttribute("opts")),r=this.getAttribute("client");if(Astro[r]===void 0){window.addEventListener(`astro:${r}`,()=>this.start(),{once:!0});return}try{await Astro[r](async()=>{let n=this.getAttribute("renderer-url");try{let[d,{default:u}]=await Promise.all([this.importWithRetry(this.getAttribute("component-url")),n?this.importWithRetry(n):Promise.resolve({default:()=>()=>{}})]),h=this.getAttribute("component-export")||"default";if(h.includes(".")){this.Component=d;for(let m of h.split(".")){if(E.has(m)||!this.Component||typeof this.Component!="object"&&typeof this.Component!="function"||!Object.hasOwn(this.Component,m))throw new Error(`Invalid component export path: ${h}`);this.Component=this.Component[m]}}else{if(E.has(h))throw new Error(`Invalid component export path: ${h}`);this.Component=d[h]}return this.hydrator=u,this.hydrate}catch(d){return this.handleHydrationError(d),()=>{}}},e,this)}catch(n){this.handleHydrationError(n)}}attributeChangedCallback(){this.hydrate()}}l(f,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",f)}})();</script><astro-island uid="2vawG6" component-url="/learnleetcode/_astro/Player.CliBfzqr.js" component-export="default" renderer-url="/learnleetcode/_astro/client.CLhIxG29.js" props="{&quot;file&quot;:[0,&quot;/concepts/bfs/explainer.tsx&quot;],&quot;heading&quot;:[0,&quot;h2&quot;]}" ssr client="only" opts="{&quot;name&quot;:&quot;Player&quot;,&quot;value&quot;:&quot;react&quot;}"></astro-island></section><section data-code-file="bfs_graph.py"><h2>bfs_graph.py</h2><pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> collections </span><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> deque</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> bfs</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(graph: dict[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, list[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]], start: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> list[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    visited </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {start}</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    order </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    queue </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> deque([start])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    while</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> queue:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        node </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> queue.popleft()</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        order.append(node)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> neighbor </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> graph[node]:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> neighbor </span><span style="color:#D73A49;--shiki-dark:#F97583">not</span><span style="color:#D73A49;--shiki-dark:#F97583"> in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> visited:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                visited.add(neighbor)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                queue.append(neighbor)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> order</span></span></code></pre></section><section data-code-file="bfs_shortest_paths.py"><h2>bfs_shortest_paths.py</h2><pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> collections </span><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> deque</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> shortest_paths</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(graph: dict[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, list[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]], start: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> dict[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    distance </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {start: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    queue </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> deque([start])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    while</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> queue:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        node </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> queue.popleft()</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> neighbor </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> graph[node]:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> neighbor </span><span style="color:#D73A49;--shiki-dark:#F97583">not</span><span style="color:#D73A49;--shiki-dark:#F97583"> in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> distance:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                distance[neighbor] </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> distance[node] </span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                queue.append(neighbor)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> distance</span></span></code></pre></section><section data-code-file="bfs_tree.py"><h2>bfs_tree.py</h2><pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> collections </span><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> deque</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># Definition for a binary tree node.</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># class TreeNode:</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#     def __init__(self, val=0, left=None, right=None):</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#         self.val = val</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#         self.left = left</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#         self.right = right</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> level_order</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(root: TreeNode </span><span style="color:#D73A49;--shiki-dark:#F97583">|</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> None</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> list[list[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]]:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#D73A49;--shiki-dark:#F97583"> not</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> root:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    levels </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    queue </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> deque([root])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    while</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> queue:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        level </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> _ </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> range</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(queue)):</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            node </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> queue.popleft()</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            level.append(node.val)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> node.left:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                queue.append(node.left)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> node.right:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                queue.append(node.right)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        levels.append(level)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> levels</span></span></code></pre></section></main></body></html>

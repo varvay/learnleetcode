@@ -1,0 +1,120 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/learnleetcode/favicon.svg"><link rel="icon" href="/learnleetcode/favicon.ico"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet"><meta name="generator" content="Astro v7.3.5"><title>1493. Longest Subarray of 1&#39;s After Deleting One Element</title><link rel="stylesheet" href="/learnleetcode/_astro/SourceFiles.DSpMikYP.css"><style>:root{--paper:#eef1f4;--panel:#fff;--ink:#1d2a3a;--muted:#5b6878;--rule:#cbd3dc;--teal:#23798a;--teal-soft:#d3ecef;--green:#3a8a4c;--green-soft:#d6eeda;--amber:#c98e00;--amber-soft:#fbefc9;--red:#b8472f;--red-soft:#f6dcd5;--accent:var(--teal);--accent-soft:var(--teal-soft);--easy:var(--green);--easy-soft:var(--green-soft);--medium:var(--amber);--medium-soft:var(--amber-soft);--hard:var(--red);--hard-soft:var(--red-soft);--scene-focus:var(--teal);--scene-focus-soft:var(--teal-soft);--scene-add:var(--green);--scene-add-soft:var(--green-soft);--scene-remove:var(--red);--scene-remove-soft:var(--red-soft);--scene-frame:var(--amber);--scene-frame-soft:var(--amber-soft);--bookmark:var(--amber);--bookmark-soft:var(--amber-soft);color-scheme:light}@media (prefers-color-scheme:dark){:root{--paper:#131a23;--panel:#1b242f;--ink:#e5ebf1;--muted:#9ba8b6;--rule:#324050;--teal:#56b7c8;--teal-soft:#163338;--green:#62bf74;--green-soft:#1b3522;--amber:#f0b83a;--amber-soft:#3b3117;--red:#f08a70;--red-soft:#3c1f18;color-scheme:dark}.astro-code span{color:var(--shiki-dark)!important}}*,:before,:after{box-sizing:border-box}body{background:var(--paper);color:var(--ink);margin:0;font-family:Atkinson Hyperlegible,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:17px;line-height:1.5}header,main{max-width:880px;margin:0 auto;padding:0 20px}header{padding-top:20px}header a{color:var(--muted);font-weight:700;text-decoration:none}main{padding-top:24px;padding-bottom:56px}h1{letter-spacing:-.012em;margin:0 0 10px;font-size:clamp(1.6rem,4.2vw,2.3rem);line-height:1.12}h2{margin:28px 0 8px;font-size:1.15rem}a{color:var(--accent)}a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}.muted{color:var(--muted)}.description{color:var(--muted);max-width:64ch;font-size:1.05rem}.panel{background:var(--panel);border:1.5px solid var(--rule);border-radius:14px}pre.astro-code{border:1.5px solid var(--rule);border-radius:10px;padding:14px 16px;font-size:.88rem;line-height:1.55;overflow-x:auto;background:var(--panel)!important}:not(pre)>code{background:var(--panel);border:1.5px solid var(--rule);border-radius:6px;padding:0 5px;font-size:.9em}.difficulty{border-radius:6px;padding:1px 9px;font-size:.85rem;font-weight:700;display:inline-block}.difficulty.Easy{color:var(--easy);background:var(--easy-soft)}.difficulty.Medium{color:var(--medium);background:var(--medium-soft)}.difficulty.Hard{color:var(--hard);background:var(--hard-soft)}.tag{border:1.5px solid var(--rule);color:var(--muted);white-space:nowrap;border-radius:7px;margin:0 4px 4px 0;padding:1px 9px;font-size:.8rem;display:inline-block}
+.bookmark-callout[data-astro-cid-nbzpiwe6]{background:var(--bookmark-soft);border-left:4px solid var(--bookmark);border-radius:10px;padding:10px 14px}
+</style></head><body><header><a href="/learnleetcode/">learnleetcode</a></header><main><h1 data-astro-cid-nbzpiwe6>1493. Longest Subarray of 1&#39;s After Deleting One Element</h1><p data-astro-cid-nbzpiwe6><span class="difficulty Medium" data-astro-cid-nbzpiwe6>Medium</span><span class="muted" data-astro-cid-nbzpiwe6>&nbsp;· solved 2026-10-01 ·&nbsp;</span><a href="https://leetcode.com/problems/longest-subarray-of-1s-after-deleting-one-element/" data-astro-cid-nbzpiwe6>Open on LeetCode</a></p><p data-astro-cid-nbzpiwe6><span class="tag" data-astro-cid-nbzpiwe6>sliding-window</span><span class="tag" data-astro-cid-nbzpiwe6>array</span></p><p data-astro-cid-nbzpiwe6>Time <code data-astro-cid-nbzpiwe6>O(n)</code> · Space <code data-astro-cid-nbzpiwe6>O(1)</code></p><section class="approach"><h2>How to get there</h2><section class="approach-text panel"><h3>From every start to one sliding window</h3><p><strong>1. Restate what a valid answer looks like.</strong> Deleting one element from a subarray leaves all 1’s exactly when the subarray holds at most one zero. So the question becomes: what is the longest subarray with at most one zero? The answer is its length minus 1, because the deletion is required: [1, 1, 1] gives 2.</p>
+<p><strong>2. Try it by hand, from every start.</strong> On [0, 1, 1, 1, 0, 1, 1, 0, 1], start at index 0 and extend right until a second zero appears: [0, 1, 1, 1] is the longest from there. Then start at index 1 and extend again, and notice the work repeats: indices 1 to 3 were just read, and they still fit.</p>
+<p><strong>3. Ask what the repeated scan already knew.</strong> Fix a start and grow the end: the zero count only goes up. Once it passes 1, every longer window from that start fails too. So when the window breaks, the start must move forward, and it never has to move back. Nothing the scan learned needs to be thrown away.</p>
+<p><strong>4. What to carry: the window and its zero count.</strong> Keep the start <code>left</code>, the end <code>right</code>, and how many zeros lie between. Each step of <code>right</code> adds one cell; while the window holds two zeros, <code>left</code> drops cells until it holds one. Each index enters once and leaves at most once, so the whole pass is O(n).</p>
+<p>This is <a href="../1004-max-consecutive-ones-iii/">Max Consecutive Ones III</a> with k = 1, recorded one shorter.</p>
+<p>The reusable recipe: for the longest subarray whose count of something must stay under a limit, and the count only grows as the window grows, slide a window: the right edge adds, the left edge drops until the window is valid again, then record.</p>
+</section><section class="approach-text panel"><h3>Let the variables&#39; meanings write the loop</h3><p><strong>What each variable always means, after each pass of the loop:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Always means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>left</code>, <code>right</code></td>
+<td>the window is <code>nums[left..right]</code>, and it holds at most one zero</td>
+</tr>
+<tr>
+<td><code>zeros</code></td>
+<td>how many zeros lie in <code>nums[left..right]</code></td>
+</tr>
+<tr>
+<td><code>best</code></td>
+<td>the longest valid window so far, minus the one deleted element</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Each statement is the smallest change that keeps those meanings true:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>What happened</th>
+<th>What it restores</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>if num == 0: zeros += 1</code></td>
+<td><code>right</code> moved one cell, bringing in <code>num</code></td>
+<td><code>zeros</code> counts the new cell</td>
+</tr>
+<tr>
+<td><code>while zeros &gt; 1:</code></td>
+<td>the new cell may be a second zero</td>
+<td>the window must hold at most one zero again</td>
+</tr>
+<tr>
+<td><code>if nums[left] == 0: zeros -= 1</code>, then <code>left += 1</code></td>
+<td>the leftmost cell leaves</td>
+<td><code>zeros</code> stops counting a cell no longer in the window</td>
+</tr>
+<tr>
+<td><code>best = max(best, right - left)</code></td>
+<td>the window is valid again</td>
+<td>its length is <code>right - left + 1</code>; minus the deletion, <code>right - left</code></td>
+</tr>
+</tbody>
+</table>
+<p>The <code>while</code> stops as soon as one zero has left, so the window it leaves behind is the longest valid one ending at <code>right</code>.</p>
+<p>The method carries to other sliding windows: state what the window and its counters mean, then each move of either edge is followed by the one update that keeps those meanings true.</p>
+</section><section class="approach-text panel"><h3>Alternatives compared</h3><table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Time</th>
+<th>Space</th>
+<th>How it works</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Brute force</td>
+<td>O(n²)</td>
+<td>O(1)</td>
+<td>From each start, extend the end until the window holds a second zero.</td>
+</tr>
+<tr>
+<td>Runs of 1’s</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>Track the run of 1’s ending here and the run just before the last zero. Deleting that zero joins them, so the answer is the largest sum of the two. An array with no zero needs 1 subtracted.</td>
+</tr>
+<tr>
+<td><strong>Sliding window</strong> (chosen)</td>
+<td><strong>O(n)</strong></td>
+<td><strong>O(1)</strong></td>
+<td>right adds a cell; left drops cells until the window holds at most one zero.</td>
+</tr>
+<tr>
+<td>Non-shrinking window</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>left moves at most one step per step of right, so the window never shrinks and its final size minus 1 is the answer.</td>
+</tr>
+</tbody>
+</table>
+<p>The sliding window keeps one rule — the window holds at most one zero after every step — and the mandatory deletion is the same <code>- 1</code> for every window. Runs of 1’s is as fast, but the all-1’s array needs its own case.</p>
+</section></section><section class="explainer"><style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).only=e;window.dispatchEvent(new Event("astro:only"));})();</script><script>(()=>{var g=Object.defineProperty;var w=(a,s,c)=>s in a?g(a,s,{enumerable:!0,configurable:!0,writable:!0,value:c}):a[s]=c;var l=(a,s,c)=>w(a,typeof s!="symbol"?s+"":s,c);var E=new Set(["__proto__","constructor","prototype"]);{let a={0:t=>y(t),1:t=>c(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(c(t)),5:t=>new Set(c(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>Number.POSITIVE_INFINITY*t},s=t=>{let[p,e]=t;return p in a?a[p](e):void 0},c=t=>t.map(s),y=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([p,e])=>[p,s(e)]));class f extends HTMLElement{constructor(){super(...arguments);l(this,"Component");l(this,"hydrator");l(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let r=this.querySelectorAll("astro-slot"),n={},d=this.querySelectorAll("template[data-astro-template]");for(let o of d){let i=o.closest(this.tagName);i!=null&&i.isSameNode(this)&&(n[o.getAttribute("data-astro-template")||"default"]=o.innerHTML,o.remove())}for(let o of r){let i=o.closest(this.tagName);i!=null&&i.isSameNode(this)&&(n[o.getAttribute("name")||"default"]=o.innerHTML)}let u;try{u=this.hasAttribute("props")?y(JSON.parse(this.getAttribute("props"))):{}}catch(o){let i=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(i+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${i}`,this.getAttribute("props"),o),o}let h;await this.hydrator(this)(this.Component,u,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});l(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),r.disconnect(),this.childrenConnectedCallback()},r=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});r.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}getRetryImportUrl(e){let r=new URL(e,document.baseURI);return r.searchParams.set("astro-retry",Date.now().toString()),r.toString()}async importWithRetry(e){try{return await import(e)}catch(r){return await new Promise(n=>setTimeout(n,1e3)),import(this.getRetryImportUrl(e))}}handleHydrationError(e){let r=this.getAttribute("component-url"),n=new CustomEvent("astro:hydration-error",{cancelable:!0,bubbles:!0,composed:!0,detail:{error:e,componentUrl:r}});this.dispatchEvent(n)&&console.error(`[astro-island] Error hydrating ${r}`,e)}async start(){let e=JSON.parse(this.getAttribute("opts")),r=this.getAttribute("client");if(Astro[r]===void 0){window.addEventListener(`astro:${r}`,()=>this.start(),{once:!0});return}try{await Astro[r](async()=>{let n=this.getAttribute("renderer-url");try{let[d,{default:u}]=await Promise.all([this.importWithRetry(this.getAttribute("component-url")),n?this.importWithRetry(n):Promise.resolve({default:()=>()=>{}})]),h=this.getAttribute("component-export")||"default";if(h.includes(".")){this.Component=d;for(let m of h.split(".")){if(E.has(m)||!this.Component||typeof this.Component!="object"&&typeof this.Component!="function"||!Object.hasOwn(this.Component,m))throw new Error(`Invalid component export path: ${h}`);this.Component=this.Component[m]}}else{if(E.has(h))throw new Error(`Invalid component export path: ${h}`);this.Component=d[h]}return this.hydrator=u,this.hydrate}catch(d){return this.handleHydrationError(d),()=>{}}},e,this)}catch(n){this.handleHydrationError(n)}}attributeChangedCallback(){this.hydrate()}}l(f,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",f)}})();</script><astro-island uid="2huE1I" component-url="/learnleetcode/_astro/Player.CliBfzqr.js" component-export="default" renderer-url="/learnleetcode/_astro/client.CLhIxG29.js" props="{&quot;file&quot;:[0,&quot;/problems/1493-longest-subarray-of-1s-after-deleting-one-element/explainer.tsx&quot;],&quot;heading&quot;:[0,&quot;h2&quot;]}" ssr client="only" opts="{&quot;name&quot;:&quot;Player&quot;,&quot;value&quot;:&quot;react&quot;}"></astro-island></section><section data-code-file="solution.py"><h2>solution.py</h2><pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">class</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> Solution</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> longestSubarray</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(self, nums: list[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        left </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> zeros </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> best </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> right, num </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> enumerate</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(nums):</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> num </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                zeros </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            while</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> zeros </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> nums[left] </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                    zeros </span><span style="color:#D73A49;--shiki-dark:#F97583">-=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                left </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            best </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> max</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(best, right </span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> left)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> best</span></span></code></pre></section><h2 id="notes">Notes</h2>
+<p><em>Write your approach, insights, and mistakes here. Any other file in this folder (e.g. <code>solution.py</code>, <code>attempt-1.py</code>) is rendered below as code.</em></p>
+</main></body></html>

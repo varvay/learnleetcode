@@ -1,0 +1,164 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/learnleetcode/favicon.svg"><link rel="icon" href="/learnleetcode/favicon.ico"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet"><meta name="generator" content="Astro v7.3.5"><title>437. Path Sum III</title><link rel="stylesheet" href="/learnleetcode/_astro/SourceFiles.DSpMikYP.css"><style>:root{--paper:#eef1f4;--panel:#fff;--ink:#1d2a3a;--muted:#5b6878;--rule:#cbd3dc;--teal:#23798a;--teal-soft:#d3ecef;--green:#3a8a4c;--green-soft:#d6eeda;--amber:#c98e00;--amber-soft:#fbefc9;--red:#b8472f;--red-soft:#f6dcd5;--accent:var(--teal);--accent-soft:var(--teal-soft);--easy:var(--green);--easy-soft:var(--green-soft);--medium:var(--amber);--medium-soft:var(--amber-soft);--hard:var(--red);--hard-soft:var(--red-soft);--scene-focus:var(--teal);--scene-focus-soft:var(--teal-soft);--scene-add:var(--green);--scene-add-soft:var(--green-soft);--scene-remove:var(--red);--scene-remove-soft:var(--red-soft);--scene-frame:var(--amber);--scene-frame-soft:var(--amber-soft);--bookmark:var(--amber);--bookmark-soft:var(--amber-soft);color-scheme:light}@media (prefers-color-scheme:dark){:root{--paper:#131a23;--panel:#1b242f;--ink:#e5ebf1;--muted:#9ba8b6;--rule:#324050;--teal:#56b7c8;--teal-soft:#163338;--green:#62bf74;--green-soft:#1b3522;--amber:#f0b83a;--amber-soft:#3b3117;--red:#f08a70;--red-soft:#3c1f18;color-scheme:dark}.astro-code span{color:var(--shiki-dark)!important}}*,:before,:after{box-sizing:border-box}body{background:var(--paper);color:var(--ink);margin:0;font-family:Atkinson Hyperlegible,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:17px;line-height:1.5}header,main{max-width:880px;margin:0 auto;padding:0 20px}header{padding-top:20px}header a{color:var(--muted);font-weight:700;text-decoration:none}main{padding-top:24px;padding-bottom:56px}h1{letter-spacing:-.012em;margin:0 0 10px;font-size:clamp(1.6rem,4.2vw,2.3rem);line-height:1.12}h2{margin:28px 0 8px;font-size:1.15rem}a{color:var(--accent)}a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}.muted{color:var(--muted)}.description{color:var(--muted);max-width:64ch;font-size:1.05rem}.panel{background:var(--panel);border:1.5px solid var(--rule);border-radius:14px}pre.astro-code{border:1.5px solid var(--rule);border-radius:10px;padding:14px 16px;font-size:.88rem;line-height:1.55;overflow-x:auto;background:var(--panel)!important}:not(pre)>code{background:var(--panel);border:1.5px solid var(--rule);border-radius:6px;padding:0 5px;font-size:.9em}.difficulty{border-radius:6px;padding:1px 9px;font-size:.85rem;font-weight:700;display:inline-block}.difficulty.Easy{color:var(--easy);background:var(--easy-soft)}.difficulty.Medium{color:var(--medium);background:var(--medium-soft)}.difficulty.Hard{color:var(--hard);background:var(--hard-soft)}.tag{border:1.5px solid var(--rule);color:var(--muted);white-space:nowrap;border-radius:7px;margin:0 4px 4px 0;padding:1px 9px;font-size:.8rem;display:inline-block}
+.bookmark-callout[data-astro-cid-nbzpiwe6]{background:var(--bookmark-soft);border-left:4px solid var(--bookmark);border-radius:10px;padding:10px 14px}
+</style></head><body><header><a href="/learnleetcode/">learnleetcode</a></header><main><h1 data-astro-cid-nbzpiwe6>437. Path Sum III</h1><p data-astro-cid-nbzpiwe6><span class="difficulty Medium" data-astro-cid-nbzpiwe6>Medium</span><span class="muted" data-astro-cid-nbzpiwe6>&nbsp;· solved 2026-10-05 ·&nbsp;</span><a href="https://leetcode.com/problems/path-sum-iii/" data-astro-cid-nbzpiwe6>Open on LeetCode</a></p><p class="bookmark-callout" data-astro-cid-nbzpiwe6><strong data-astro-cid-nbzpiwe6>Bookmarked</strong> · Restudy this problem.</p><p data-astro-cid-nbzpiwe6><span class="tag" data-astro-cid-nbzpiwe6>tree</span><span class="tag" data-astro-cid-nbzpiwe6>binary-tree</span><span class="tag" data-astro-cid-nbzpiwe6>dfs</span><span class="tag" data-astro-cid-nbzpiwe6>prefix-sum</span><span class="tag" data-astro-cid-nbzpiwe6>hash-table</span></p><p data-astro-cid-nbzpiwe6>Time <code data-astro-cid-nbzpiwe6>O(n)</code> · Space <code data-astro-cid-nbzpiwe6>O(h)</code></p><section class="approach"><h2>How to get there</h2><section class="approach-text panel"><h3>A path is the difference of two running sums</h3><p><strong>1. Restate what is counted.</strong> Downward paths: they start at any node and end at any node below it, or at the start itself. Count those whose values add up to <code>targetSum</code>.</p>
+<p><strong>2. Count by hand and find the repeated work.</strong> The direct way, <code>solution-1-original.py</code>, starts a walk at every node and keeps a running sum on the way down. In LeetCode’s first example, 3 under 5 under 10 gets added again for every node above it that starts a walk. A node at depth d is re-added d times, so the total is O(n · h): O(n²) on a chain.</p>
+<p><strong>3. Reframe one path as a subtraction.</strong> Take the running sum from the root down to each node. For an ancestor A and a node X below it, the path from just under A down to X sums to <code>running(X) − running(A)</code>. So a path ending at X sums to the target exactly when some ancestor’s running sum is <code>running(X) − targetSum</code>. It is subarray-sum-equals-k, applied to each root-to-node path.</p>
+<p><strong>4. Find what to remember.</strong> For each running sum, how many nodes on the current path have it: a hash map from sum to count. Seed it with <code>{0: 1}</code>, the sum before the root, so a path starting at the root itself is counted.</p>
+<p><strong>5. Keep branches apart.</strong> When the walk leaves a node, that node is no longer an ancestor of what comes next, so its running sum must come out of the map. Add it on the way down and remove it on the way back up, so the map always describes exactly the current root-to-node path.</p>
+<p><strong>6. Check the cost.</strong> Each node does one lookup and two updates: O(n) time. The map holds at most one entry per node on the current path, and the recursion is as deep as the tree: O(h) space.</p>
+<p>The reusable recipe: to count stretches that sum to a target, look up <code>running − target</code> among the earlier running sums in a hash map. On a tree, add each sum on the way down and remove it on the way back, so the map follows the current path.</p>
+</section><section class="approach-text panel"><h3>Let the map&#39;s meaning order the lines</h3><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Always means, when <code>visit(node, running)</code> is entered</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>running</code></td>
+<td>the sum from the root down to <code>node</code>’s parent; after <code>running += node.val</code>, down to <code>node</code> itself</td>
+</tr>
+<tr>
+<td><code>counts[s]</code></td>
+<td>how many of <code>node</code>’s ancestors, plus the empty start before the root, have running sum <code>s</code></td>
+</tr>
+<tr>
+<td><code>visit(...)</code> returns</td>
+<td>how many target paths end somewhere in <code>node</code>’s subtree</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>What happened</th>
+<th>What it keeps true</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>counts = {0: 1}</code></td>
+<td>the walk hasn’t started</td>
+<td>the sum before the root counts once, so paths can start at the root</td>
+</tr>
+<tr>
+<td><code>running += node.val</code></td>
+<td>the walk stepped down to <code>node</code></td>
+<td><code>running</code> is the sum from the root to <code>node</code></td>
+</tr>
+<tr>
+<td><code>found = counts.get(running - targetSum, 0)</code></td>
+<td>each ancestor with that sum starts one target path ending here</td>
+<td><code>found</code> counts the paths that end at <code>node</code></td>
+</tr>
+<tr>
+<td><code>counts[running] = counts.get(running, 0) + 1</code></td>
+<td><code>node</code> becomes an ancestor of everything below it</td>
+<td>its children see its sum</td>
+</tr>
+<tr>
+<td><code>found += visit(node.left, running) + visit(node.right, running)</code></td>
+<td>both subtrees are counted</td>
+<td><code>found</code> covers the whole subtree</td>
+</tr>
+<tr>
+<td><code>counts[running] -= 1</code></td>
+<td>the walk leaves <code>node</code></td>
+<td>the map describes the current path again, so a sibling never sees this node’s sum</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why a count, not a set.</strong> Two nodes on one path can share a running sum when the stretch between them adds up to 0, and each of them starts its own path. On the tree <code>[5, 3, 2, -3, null, null, null, 2]</code> with target 2, the left branch runs 5 → 3 → −3 → 2, and since 3 + (−3) = 0 the running sum comes back to 5: the root and the −3 both have it. At the bottom 2, with running sum 7, the lookup is <code>counts[5]</code>, which is 2: one path is 3 → −3 → 2 and the other is the 2 alone. Leaving the −3 then lowers <code>counts[5]</code> to 1, so the root’s right child, another 2, still finds the root’s 5 and counts itself. The answer is 3. A set that adds each sum and removes it on the way back finds only 1: it counts the shared 5 once, then deletes it when leaving the −3, although the root still holds it.</p>
+<p><strong>Why look up before adding.</strong> If <code>node</code>’s own sum were added first, a target of 0 would match it against itself and count an empty path. On the tree <code>[0, 0, 0]</code> with target 0, the order above finds the correct 5; adding first finds 8.</p>
+<p>The method carries over: write down what the map describes, and every add has a matching remove at the point where that stops being true.</p>
+</section><section class="approach-text panel"><h3>Alternatives compared</h3><table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Time</th>
+<th>Space</th>
+<th>How it works</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Walk down from every node (<code>solution-1-original.py</code>)</td>
+<td>O(n · h)</td>
+<td>O(h)</td>
+<td>Each node starts its own walk with a running sum, counting every node where the sum hits the target.</td>
+</tr>
+<tr>
+<td><strong>Prefix sums in a hash map, recursive</strong> (chosen, <code>solution-2-prefix-sums.py</code>)</td>
+<td><strong>O(n)</strong></td>
+<td><strong>O(h)</strong></td>
+<td>One walk from the root; each node looks up <code>running − targetSum</code> among its ancestors’ sums.</td>
+</tr>
+<tr>
+<td>Prefix sums, iterative</td>
+<td>O(n)</td>
+<td>O(h)</td>
+<td>The same walk with an explicit stack that also pushes an exit marker for each node, so its sum is removed after its subtree.</td>
+</tr>
+</tbody>
+</table>
+<p>Measured locally on about 1,000 nodes, the problem’s limit: on a balanced tree the walk from every node took 1.6 ms and the prefix sums 0.4 ms; on a chain, 79.1 ms against 0.6 ms. The chain is where O(n · h) becomes O(n²).</p>
+<p>The recursive version is one call per level, and a 1,000-node chain exceeds Python’s default limit of 1,000 calls: it raised <code>RecursionError</code> locally until the limit was raised. The iterative version has no such limit.</p>
+</section></section><section class="explainer"><style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).only=e;window.dispatchEvent(new Event("astro:only"));})();</script><script>(()=>{var g=Object.defineProperty;var w=(a,s,c)=>s in a?g(a,s,{enumerable:!0,configurable:!0,writable:!0,value:c}):a[s]=c;var l=(a,s,c)=>w(a,typeof s!="symbol"?s+"":s,c);var E=new Set(["__proto__","constructor","prototype"]);{let a={0:t=>y(t),1:t=>c(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(c(t)),5:t=>new Set(c(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>Number.POSITIVE_INFINITY*t},s=t=>{let[p,e]=t;return p in a?a[p](e):void 0},c=t=>t.map(s),y=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([p,e])=>[p,s(e)]));class f extends HTMLElement{constructor(){super(...arguments);l(this,"Component");l(this,"hydrator");l(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let r=this.querySelectorAll("astro-slot"),n={},d=this.querySelectorAll("template[data-astro-template]");for(let o of d){let i=o.closest(this.tagName);i!=null&&i.isSameNode(this)&&(n[o.getAttribute("data-astro-template")||"default"]=o.innerHTML,o.remove())}for(let o of r){let i=o.closest(this.tagName);i!=null&&i.isSameNode(this)&&(n[o.getAttribute("name")||"default"]=o.innerHTML)}let u;try{u=this.hasAttribute("props")?y(JSON.parse(this.getAttribute("props"))):{}}catch(o){let i=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(i+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${i}`,this.getAttribute("props"),o),o}let h;await this.hydrator(this)(this.Component,u,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});l(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),r.disconnect(),this.childrenConnectedCallback()},r=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});r.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}getRetryImportUrl(e){let r=new URL(e,document.baseURI);return r.searchParams.set("astro-retry",Date.now().toString()),r.toString()}async importWithRetry(e){try{return await import(e)}catch(r){return await new Promise(n=>setTimeout(n,1e3)),import(this.getRetryImportUrl(e))}}handleHydrationError(e){let r=this.getAttribute("component-url"),n=new CustomEvent("astro:hydration-error",{cancelable:!0,bubbles:!0,composed:!0,detail:{error:e,componentUrl:r}});this.dispatchEvent(n)&&console.error(`[astro-island] Error hydrating ${r}`,e)}async start(){let e=JSON.parse(this.getAttribute("opts")),r=this.getAttribute("client");if(Astro[r]===void 0){window.addEventListener(`astro:${r}`,()=>this.start(),{once:!0});return}try{await Astro[r](async()=>{let n=this.getAttribute("renderer-url");try{let[d,{default:u}]=await Promise.all([this.importWithRetry(this.getAttribute("component-url")),n?this.importWithRetry(n):Promise.resolve({default:()=>()=>{}})]),h=this.getAttribute("component-export")||"default";if(h.includes(".")){this.Component=d;for(let m of h.split(".")){if(E.has(m)||!this.Component||typeof this.Component!="object"&&typeof this.Component!="function"||!Object.hasOwn(this.Component,m))throw new Error(`Invalid component export path: ${h}`);this.Component=this.Component[m]}}else{if(E.has(h))throw new Error(`Invalid component export path: ${h}`);this.Component=d[h]}return this.hydrator=u,this.hydrate}catch(d){return this.handleHydrationError(d),()=>{}}},e,this)}catch(n){this.handleHydrationError(n)}}attributeChangedCallback(){this.hydrate()}}l(f,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",f)}})();</script><astro-island uid="Z29dP5h" component-url="/learnleetcode/_astro/Player.CliBfzqr.js" component-export="default" renderer-url="/learnleetcode/_astro/client.CLhIxG29.js" props="{&quot;file&quot;:[0,&quot;/problems/437-path-sum-iii/explainer.tsx&quot;],&quot;heading&quot;:[0,&quot;h2&quot;]}" ssr client="only" opts="{&quot;name&quot;:&quot;Player&quot;,&quot;value&quot;:&quot;react&quot;}"></astro-island></section><section data-code-file="solution-1-original.py"><h2>solution-1-original.py</h2><pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># Definition for a binary tree node.</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># class TreeNode:</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#     def __init__(self, val=0, left=None, right=None):</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#         self.val = val</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#         self.left = left</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#         self.right = right</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">class</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> Solution</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> pathSum</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(self, root: TreeNode </span><span style="color:#D73A49;--shiki-dark:#F97583">|</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> None</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, targetSum: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        if</span><span style="color:#D73A49;--shiki-dark:#F97583"> not</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> root:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            return</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        root_stack, solution </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> [root], </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        while</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> root_stack:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            current_root </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> root_stack.pop()</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> current_root.right:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                root_stack.append(current_root.right)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> current_root.left:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                root_stack.append(current_root.left)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">            # stack tuple of tree node and sum from current root until current observer</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            observer_stack </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> [(current_root, current_root.val)]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            while</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> observer_stack:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                current_observer, observer_sum </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> observer_stack.pop()</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> observer_sum </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> targetSum:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                    solution </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> current_observer.right:</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">                    sum</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> observer_sum</span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8">current_observer.right.val</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                    observer_stack.append((current_observer.right, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">sum</span><span style="color:#24292E;--shiki-dark:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> current_observer.left:</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">                    sum</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> observer_sum</span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8">current_observer.left.val</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                    observer_stack.append((current_observer.left, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">sum</span><span style="color:#24292E;--shiki-dark:#E1E4E8">))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> solution</span></span></code></pre></section><section data-code-file="solution-2-prefix-sums.py"><h2>solution-2-prefix-sums.py</h2><pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># Definition for a binary tree node.</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># class TreeNode:</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#     def __init__(self, val=0, left=None, right=None):</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#         self.val = val</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#         self.left = left</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#         self.right = right</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">class</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> Solution</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> pathSum</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(self, root: TreeNode </span><span style="color:#D73A49;--shiki-dark:#F97583">|</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> None</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, targetSum: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        counts </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> visit</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(node: TreeNode </span><span style="color:#D73A49;--shiki-dark:#F97583">|</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> None</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, running: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            if</span><span style="color:#D73A49;--shiki-dark:#F97583"> not</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> node:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                return</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            running </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> node.val</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            found </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> counts.get(running </span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> targetSum, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            counts[running] </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> counts.get(running, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) </span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            found </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> visit(node.left, running) </span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> visit(node.right, running)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            counts[running] </span><span style="color:#D73A49;--shiki-dark:#F97583">-=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> found</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> visit(root, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span></code></pre></section><h2 id="notes">Notes</h2>
+<p><em>Write your approach, insights, and mistakes here. Any other file in this folder (e.g. <code>solution.py</code>, <code>attempt-1.py</code>) is rendered below as code.</em></p>
+</main></body></html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/learnleetcode/favicon.svg"><link rel="icon" href="/learnleetcode/favicon.ico"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet"><meta name="generator" content="Astro v7.3.5"><title>649. Dota2 Senate</title><link rel="stylesheet" href="/learnleetcode/_astro/SourceFiles.DSpMikYP.css"><style>:root{--paper:#eef1f4;--panel:#fff;--ink:#1d2a3a;--muted:#5b6878;--rule:#cbd3dc;--teal:#23798a;--teal-soft:#d3ecef;--green:#3a8a4c;--green-soft:#d6eeda;--amber:#c98e00;--amber-soft:#fbefc9;--red:#b8472f;--red-soft:#f6dcd5;--accent:var(--teal);--accent-soft:var(--teal-soft);--easy:var(--green);--easy-soft:var(--green-soft);--medium:var(--amber);--medium-soft:var(--amber-soft);--hard:var(--red);--hard-soft:var(--red-soft);--scene-focus:var(--teal);--scene-focus-soft:var(--teal-soft);--scene-add:var(--green);--scene-add-soft:var(--green-soft);--scene-remove:var(--red);--scene-remove-soft:var(--red-soft);--scene-frame:var(--amber);--scene-frame-soft:var(--amber-soft);--bookmark:var(--amber);--bookmark-soft:var(--amber-soft);color-scheme:light}@media (prefers-color-scheme:dark){:root{--paper:#131a23;--panel:#1b242f;--ink:#e5ebf1;--muted:#9ba8b6;--rule:#324050;--teal:#56b7c8;--teal-soft:#163338;--green:#62bf74;--green-soft:#1b3522;--amber:#f0b83a;--amber-soft:#3b3117;--red:#f08a70;--red-soft:#3c1f18;color-scheme:dark}.astro-code span{color:var(--shiki-dark)!important}}*,:before,:after{box-sizing:border-box}body{background:var(--paper);color:var(--ink);margin:0;font-family:Atkinson Hyperlegible,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:17px;line-height:1.5}header,main{max-width:880px;margin:0 auto;padding:0 20px}header{padding-top:20px}header a{color:var(--muted);font-weight:700;text-decoration:none}main{padding-top:24px;padding-bottom:56px}h1{letter-spacing:-.012em;margin:0 0 10px;font-size:clamp(1.6rem,4.2vw,2.3rem);line-height:1.12}h2{margin:28px 0 8px;font-size:1.15rem}a{color:var(--accent)}a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}.muted{color:var(--muted)}.description{color:var(--muted);max-width:64ch;font-size:1.05rem}.panel{background:var(--panel);border:1.5px solid var(--rule);border-radius:14px}pre.astro-code{border:1.5px solid var(--rule);border-radius:10px;padding:14px 16px;font-size:.88rem;line-height:1.55;overflow-x:auto;background:var(--panel)!important}:not(pre)>code{background:var(--panel);border:1.5px solid var(--rule);border-radius:6px;padding:0 5px;font-size:.9em}.difficulty{border-radius:6px;padding:1px 9px;font-size:.85rem;font-weight:700;display:inline-block}.difficulty.Easy{color:var(--easy);background:var(--easy-soft)}.difficulty.Medium{color:var(--medium);background:var(--medium-soft)}.difficulty.Hard{color:var(--hard);background:var(--hard-soft)}.tag{border:1.5px solid var(--rule);color:var(--muted);white-space:nowrap;border-radius:7px;margin:0 4px 4px 0;padding:1px 9px;font-size:.8rem;display:inline-block}
+.bookmark-callout[data-astro-cid-nbzpiwe6]{background:var(--bookmark-soft);border-left:4px solid var(--bookmark);border-radius:10px;padding:10px 14px}
+</style></head><body><header><a href="/learnleetcode/">learnleetcode</a></header><main><h1 data-astro-cid-nbzpiwe6>649. Dota2 Senate</h1><p data-astro-cid-nbzpiwe6><span class="difficulty Medium" data-astro-cid-nbzpiwe6>Medium</span><span class="muted" data-astro-cid-nbzpiwe6>&nbsp;· solved 2026-10-05 ·&nbsp;</span><a href="https://leetcode.com/problems/dota2-senate/" data-astro-cid-nbzpiwe6>Open on LeetCode</a></p><p data-astro-cid-nbzpiwe6><span class="tag" data-astro-cid-nbzpiwe6>queue</span><span class="tag" data-astro-cid-nbzpiwe6>greedy</span><span class="tag" data-astro-cid-nbzpiwe6>string</span></p><p data-astro-cid-nbzpiwe6>Time <code data-astro-cid-nbzpiwe6>O(n)</code> · Space <code data-astro-cid-nbzpiwe6>O(n)</code></p><section class="approach"><h2>How to get there</h2><section class="approach-text panel"><h3>Ban the rival who votes next</h3><p><strong>1. Decide whom to ban.</strong> Every rival still in the vote will get a turn and ban one of yours, unless banned first. The rival whose turn comes soonest strikes first, so ban that one. On RDRDD, R0 bans D1 and R2 bans D3, so neither gets a turn. D4 then bans R0, and in the next round R2 bans D4: Radiant wins, two against three. If R0 bans D4 instead, D1 votes right away and bans R2, and Dire wins.</p>
+<p><strong>2. Run it by hand and find where one pass gets stuck.</strong> In that run D4 bans R0, who already voted this round, and R2 votes a second time. The vote goes round until one party is gone. Each ban has to find its target by looking ahead past the senators already banned, wrapping round the end: up to n steps per ban.</p>
+<p><strong>3. Find what a ban has to remember.</strong> A ban only says that the next senator of that party to come up loses their turn. So it needs no target yet: count it, <code>bans["D"] += 1</code>, and settle it when a Dire senator comes up. Whoever comes up while their party has a ban waiting is exactly the senator it was meant for. Bans against one party are interchangeable, so one count per party is enough.</p>
+<p><strong>4. Let the turn order pick the data structure.</strong> Senators who keep their vote take turns in the same order every round: the one at the front votes, then waits behind everyone else. First in, first out: a queue. Pop the front, then append a senator who voted and drop one who was banned.</p>
+<p><strong>5. Decide when to stop.</strong> Once a party has no senators left, the other side wins. Count each party’s senators and stop when one count reaches zero.</p>
+<p><strong>6. Check the cost.</strong> Each turn either removes a senator, at most n times in all, or casts a ban that removes one later. On every senate of up to 14 senators the vote ends within 2n turns, so the time is O(n), and the queue takes O(n) space.</p>
+<p>The reusable recipe: when players take turns in a fixed cycle, keep them in a queue, popping the front and appending them back while they are still in. When an action hits “the next one of a kind”, count it as pending and settle it when that kind comes up.</p>
+</section><section class="approach-text panel"><h3>Let the counts&#39; meanings write the branches</h3><table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Always means, at the top of the loop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>queue</code></td>
+<td>the senators still in the vote, in the order of their next turns</td>
+</tr>
+<tr>
+<td><code>remaining[p]</code></td>
+<td>how many senators of party <code>p</code> are in <code>queue</code></td>
+</tr>
+<tr>
+<td><code>bans[p]</code></td>
+<td>bans cast on party <code>p</code> and not yet applied: the next <code>bans[p]</code> senators of <code>p</code> to come up are out</td>
+</tr>
+</tbody>
+</table>
+<p>A senator is stored as their party’s letter, <code>"R"</code> or <code>"D"</code>, since two senators of one party are interchangeable. The vote is decided once a party has no senators left, so the loop runs <code>while remaining["R"] and remaining["D"]</code>.</p>
+<p>Every turn starts the same way: <code>senator = queue.popleft()</code> takes the front, and <code>rival</code> names the other party. Then each case is the smallest change that keeps the meanings true:</p>
+<table>
+<thead>
+<tr>
+<th>Case</th>
+<th>What it means</th>
+<th>What must change</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bans[senator]</code> &gt; 0</td>
+<td>this senator is the one a waiting ban was meant for</td>
+<td>the ban is used up, and the senator stays out of <code>queue</code></td>
+<td><code>bans[senator] -= 1</code>, <code>remaining[senator] -= 1</code></td>
+</tr>
+<tr>
+<td>no ban waiting</td>
+<td>this senator votes</td>
+<td>the next rival to come up loses their turn, and this senator votes again next round</td>
+<td><code>bans[rival] += 1</code>, <code>queue.append(senator)</code></td>
+</tr>
+</tbody>
+</table>
+<p>When the loop stops, the party with senators left is the answer.</p>
+<p><code>deque</code> comes from <code>collections</code>. LeetCode imports it for you; running this file elsewhere needs <code>from collections import deque</code> at the top.</p>
+<p>The method carries over: write down what each variable always means, then make each case the smallest update that keeps every meaning true.</p>
+</section><section class="approach-text panel"><h3>Alternatives compared</h3><table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Time</th>
+<th>Space</th>
+<th>How it works</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Search for each ban’s target</td>
+<td>O(n²)</td>
+<td>O(n)</td>
+<td>Mark senators as banned; on each vote, scan ahead, wrapping round the end, for the next rival still in.</td>
+</tr>
+<tr>
+<td>Two queues of turn positions</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>One queue per party holds each senator’s position. The earlier of the two fronts bans the later one and rejoins its queue at position + n.</td>
+</tr>
+<tr>
+<td><strong>One queue, ban counts</strong> (chosen, <code>solution-2-clean.py</code>)</td>
+<td><strong>O(n)</strong></td>
+<td><strong>O(n)</strong></td>
+<td>Pop the front: a waiting ban removes the senator, otherwise they ban the next rival and go to the back. Stop when a party has no senators left.</td>
+</tr>
+<tr>
+<td>One queue, ban counts, stop past n (<code>solution-1-original.py</code>)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>The same turns, stopping once a ban count exceeds <code>len(senate)</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>A ban count exceeds n only after its party is gone, while the survivors keep voting and banning an empty party, so <code>solution-1-original.py</code> returns the same winner after at most n + 1 extra turns. The two-queue version removes one senator per comparison, so it ends within n comparisons. The chosen version needs no comparison, because each ban waits for the next rival to come up.</p>
+</section></section><section class="explainer"><style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).only=e;window.dispatchEvent(new Event("astro:only"));})();</script><script>(()=>{var g=Object.defineProperty;var w=(a,s,c)=>s in a?g(a,s,{enumerable:!0,configurable:!0,writable:!0,value:c}):a[s]=c;var l=(a,s,c)=>w(a,typeof s!="symbol"?s+"":s,c);var E=new Set(["__proto__","constructor","prototype"]);{let a={0:t=>y(t),1:t=>c(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(c(t)),5:t=>new Set(c(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>Number.POSITIVE_INFINITY*t},s=t=>{let[p,e]=t;return p in a?a[p](e):void 0},c=t=>t.map(s),y=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([p,e])=>[p,s(e)]));class f extends HTMLElement{constructor(){super(...arguments);l(this,"Component");l(this,"hydrator");l(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let r=this.querySelectorAll("astro-slot"),n={},d=this.querySelectorAll("template[data-astro-template]");for(let o of d){let i=o.closest(this.tagName);i!=null&&i.isSameNode(this)&&(n[o.getAttribute("data-astro-template")||"default"]=o.innerHTML,o.remove())}for(let o of r){let i=o.closest(this.tagName);i!=null&&i.isSameNode(this)&&(n[o.getAttribute("name")||"default"]=o.innerHTML)}let u;try{u=this.hasAttribute("props")?y(JSON.parse(this.getAttribute("props"))):{}}catch(o){let i=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(i+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${i}`,this.getAttribute("props"),o),o}let h;await this.hydrator(this)(this.Component,u,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});l(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),r.disconnect(),this.childrenConnectedCallback()},r=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});r.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}getRetryImportUrl(e){let r=new URL(e,document.baseURI);return r.searchParams.set("astro-retry",Date.now().toString()),r.toString()}async importWithRetry(e){try{return await import(e)}catch(r){return await new Promise(n=>setTimeout(n,1e3)),import(this.getRetryImportUrl(e))}}handleHydrationError(e){let r=this.getAttribute("component-url"),n=new CustomEvent("astro:hydration-error",{cancelable:!0,bubbles:!0,composed:!0,detail:{error:e,componentUrl:r}});this.dispatchEvent(n)&&console.error(`[astro-island] Error hydrating ${r}`,e)}async start(){let e=JSON.parse(this.getAttribute("opts")),r=this.getAttribute("client");if(Astro[r]===void 0){window.addEventListener(`astro:${r}`,()=>this.start(),{once:!0});return}try{await Astro[r](async()=>{let n=this.getAttribute("renderer-url");try{let[d,{default:u}]=await Promise.all([this.importWithRetry(this.getAttribute("component-url")),n?this.importWithRetry(n):Promise.resolve({default:()=>()=>{}})]),h=this.getAttribute("component-export")||"default";if(h.includes(".")){this.Component=d;for(let m of h.split(".")){if(E.has(m)||!this.Component||typeof this.Component!="object"&&typeof this.Component!="function"||!Object.hasOwn(this.Component,m))throw new Error(`Invalid component export path: ${h}`);this.Component=this.Component[m]}}else{if(E.has(h))throw new Error(`Invalid component export path: ${h}`);this.Component=d[h]}return this.hydrator=u,this.hydrate}catch(d){return this.handleHydrationError(d),()=>{}}},e,this)}catch(n){this.handleHydrationError(n)}}attributeChangedCallback(){this.hydrate()}}l(f,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",f)}})();</script><astro-island uid="ZdWEO9" component-url="/learnleetcode/_astro/Player.CliBfzqr.js" component-export="default" renderer-url="/learnleetcode/_astro/client.CLhIxG29.js" props="{&quot;file&quot;:[0,&quot;/problems/649-dota2-senate/explainer.tsx&quot;],&quot;heading&quot;:[0,&quot;h2&quot;]}" ssr client="only" opts="{&quot;name&quot;:&quot;Player&quot;,&quot;value&quot;:&quot;react&quot;}"></astro-island></section><section data-code-file="solution-1-original.py"><h2>solution-1-original.py</h2><pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">class</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> Solution</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> predictPartyVictory</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(self, senate: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # ban_r: 0, ban_d: 0, queue: [R, R, D, D, D]</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # ban_r: 0, ban_d: 1, queue: [R, D, D, D, R]</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # ban_r: 0, ban_d: 2, queue: [D, D, D, R, R]</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # ban_r: 0, ban_d: 1, queue: [D, D, R, R]</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # ban_r: 0, ban_d: 0, queue: [D, R, R]</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # ban_r: 1, ban_d: 0, queue: [R, R, D]</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # ban_r: 0, ban_d: 0, queue: [R, D]</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # ban_r: 0, ban_d: 1, queue: [D, R]</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # ban_r: 0, ban_d: 0, queue: [R]</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        ban_r </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> ban_d </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        queue </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> deque([senator </span><span style="color:#D73A49;--shiki-dark:#F97583">for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> senator </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> senate])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        while</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> True</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> ban_r </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(senate) </span><span style="color:#D73A49;--shiki-dark:#F97583">or</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> ban_d </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(senate):</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                break</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> queue[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "R"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> ban_r </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                    queue.popleft()</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                    ban_r </span><span style="color:#D73A49;--shiki-dark:#F97583">-=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                else</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                    queue.popleft()</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                    queue.append(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"R"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                    ban_d </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            elif</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> queue[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "D"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> ban_d </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                    queue.popleft()</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                    ban_d </span><span style="color:#D73A49;--shiki-dark:#F97583">-=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                else</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                    queue.popleft()</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                    queue.append(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"D"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                    ban_r </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> queue[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "R"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            return</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "Radiant"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        else</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            return</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "Dire"</span></span></code></pre></section><section data-code-file="solution-2-clean.py"><h2>solution-2-clean.py</h2><pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">class</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> Solution</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> predictPartyVictory</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(self, senate: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        remaining </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"R"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: senate.count(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"R"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">), </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"D"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: senate.count(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"D"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)}</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        bans </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"R"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"D"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        queue </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> deque(senate)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        while</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> remaining[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"R"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">and</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> remaining[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"D"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            senator </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> queue.popleft()</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            rival </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "D"</span><span style="color:#D73A49;--shiki-dark:#F97583"> if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> senator </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "R"</span><span style="color:#D73A49;--shiki-dark:#F97583"> else</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "R"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> bans[senator]:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                bans[senator] </span><span style="color:#D73A49;--shiki-dark:#F97583">-=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                remaining[senator] </span><span style="color:#D73A49;--shiki-dark:#F97583">-=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            else</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                bans[rival] </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                queue.append(senator)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "Radiant"</span><span style="color:#D73A49;--shiki-dark:#F97583"> if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> remaining[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"R"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">else</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "Dire"</span></span></code></pre></section><h2 id="notes">Notes</h2>
+<p><em>Write your approach, insights, and mistakes here. Any other file in this folder (e.g. <code>solution.py</code>, <code>attempt-1.py</code>) is rendered below as code.</em></p>
+</main></body></html>

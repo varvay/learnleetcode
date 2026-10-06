@@ -1,0 +1,186 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/learnleetcode/favicon.svg"><link rel="icon" href="/learnleetcode/favicon.ico"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet"><meta name="generator" content="Astro v7.3.5"><title>Depth-first search</title><link rel="stylesheet" href="/learnleetcode/_astro/SourceFiles.DSpMikYP.css"><style>:root{--paper:#eef1f4;--panel:#fff;--ink:#1d2a3a;--muted:#5b6878;--rule:#cbd3dc;--teal:#23798a;--teal-soft:#d3ecef;--green:#3a8a4c;--green-soft:#d6eeda;--amber:#c98e00;--amber-soft:#fbefc9;--red:#b8472f;--red-soft:#f6dcd5;--accent:var(--teal);--accent-soft:var(--teal-soft);--easy:var(--green);--easy-soft:var(--green-soft);--medium:var(--amber);--medium-soft:var(--amber-soft);--hard:var(--red);--hard-soft:var(--red-soft);--scene-focus:var(--teal);--scene-focus-soft:var(--teal-soft);--scene-add:var(--green);--scene-add-soft:var(--green-soft);--scene-remove:var(--red);--scene-remove-soft:var(--red-soft);--scene-frame:var(--amber);--scene-frame-soft:var(--amber-soft);--bookmark:var(--amber);--bookmark-soft:var(--amber-soft);color-scheme:light}@media (prefers-color-scheme:dark){:root{--paper:#131a23;--panel:#1b242f;--ink:#e5ebf1;--muted:#9ba8b6;--rule:#324050;--teal:#56b7c8;--teal-soft:#163338;--green:#62bf74;--green-soft:#1b3522;--amber:#f0b83a;--amber-soft:#3b3117;--red:#f08a70;--red-soft:#3c1f18;color-scheme:dark}.astro-code span{color:var(--shiki-dark)!important}}*,:before,:after{box-sizing:border-box}body{background:var(--paper);color:var(--ink);margin:0;font-family:Atkinson Hyperlegible,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:17px;line-height:1.5}header,main{max-width:880px;margin:0 auto;padding:0 20px}header{padding-top:20px}header a{color:var(--muted);font-weight:700;text-decoration:none}main{padding-top:24px;padding-bottom:56px}h1{letter-spacing:-.012em;margin:0 0 10px;font-size:clamp(1.6rem,4.2vw,2.3rem);line-height:1.12}h2{margin:28px 0 8px;font-size:1.15rem}a{color:var(--accent)}a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}.muted{color:var(--muted)}.description{color:var(--muted);max-width:64ch;font-size:1.05rem}.panel{background:var(--panel);border:1.5px solid var(--rule);border-radius:14px}pre.astro-code{border:1.5px solid var(--rule);border-radius:10px;padding:14px 16px;font-size:.88rem;line-height:1.55;overflow-x:auto;background:var(--panel)!important}:not(pre)>code{background:var(--panel);border:1.5px solid var(--rule);border-radius:6px;padding:0 5px;font-size:.9em}.difficulty{border-radius:6px;padding:1px 9px;font-size:.85rem;font-weight:700;display:inline-block}.difficulty.Easy{color:var(--easy);background:var(--easy-soft)}.difficulty.Medium{color:var(--medium);background:var(--medium-soft)}.difficulty.Hard{color:var(--hard);background:var(--hard-soft)}.tag{border:1.5px solid var(--rule);color:var(--muted);white-space:nowrap;border-radius:7px;margin:0 4px 4px 0;padding:1px 9px;font-size:.8rem;display:inline-block}
+</style></head><body><header><a href="/learnleetcode/">learnleetcode</a></header><main><h1>Depth-first search</h1><p><span class="tag">graph</span><span class="tag">tree</span><span class="tag">stack</span><span class="tag">recursion</span></p><p class="description">Follow one path as deep as it goes, then back up to the most recent branch not yet tried. A stack holds the branches still to try, and a visited set keeps cycles from looping forever.</p><section class="approach"><h2>How to get there</h2><section class="approach-text panel"><h3>Go deep, remember the way back</h3><p><strong>1. State the job.</strong> Visit every node reachable from a start node, each exactly once. The graph is an adjacency list: <code>graph[node]</code> lists the node’s neighbors.</p>
+<p><strong>2. Walk it by hand and find where you get stuck.</strong> Take the graph with edges A–B, A–C, B–D, B–E, C–F, E–F, and from A always step to the first neighbor not yet seen: A, B, D. D’s only neighbor is B, already seen, so the walk hits a dead end. It has to continue from the most recent node that still has an untried neighbor: B, which still has E.</p>
+<p><strong>3. Find what to remember.</strong> The neighbors still to try, newest first, since a dead end sends the walk back to the most recent branch. Last in, first out is a stack: push a node’s neighbors when it is visited, and pop to choose the next node.</p>
+<p><strong>4. Stop the cycles.</strong> A, B, E, F, C leads back to A. Without memory the walk would go round forever, so keep a visited set and skip any node already in it.</p>
+<p><strong>5. Make the stack walk like the hand walk.</strong> Push the neighbors in reverse, so the first one listed comes off first. And a node can sit on the stack twice: A pushes C, and later F pushes C again. So check <code>visited</code> when a node is popped, and skip it if an earlier copy was already taken.</p>
+<p><strong>6. Check the cost.</strong> Each node is visited once and each adjacency list is read once: O(V + E) time. The visited set takes O(V) space, and the stack can hold up to one entry per edge end, O(E).</p>
+<p>The reusable recipe: when one branch must be finished before the next one starts, keep the branches still to try on a stack. When the structure can loop back on itself, keep a visited set.</p>
+</section><section class="approach-text panel"><h3>Let the stack&#39;s meaning write the loop</h3><table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Always means, at the top of the loop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>stack</code></td>
+<td>nodes found but not yet taken, the most recently found on top; a node may appear twice</td>
+</tr>
+<tr>
+<td><code>visited</code></td>
+<td>the nodes already taken</td>
+</tr>
+<tr>
+<td><code>order</code></td>
+<td>the taken nodes, in the order they were taken</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>What happened</th>
+<th>What it keeps true</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>stack = [start]</code></td>
+<td>nothing is taken yet</td>
+<td>the start is the only node found</td>
+</tr>
+<tr>
+<td><code>node = stack.pop()</code></td>
+<td>the most recently found node comes off</td>
+<td>the walk goes deeper before it goes wider</td>
+</tr>
+<tr>
+<td><code>if node in visited: continue</code></td>
+<td>an earlier copy of the node was already taken</td>
+<td>each node enters <code>order</code> once</td>
+</tr>
+<tr>
+<td><code>visited.add(node)</code>, <code>order.append(node)</code></td>
+<td>the node is taken</td>
+<td><code>visited</code> and <code>order</code> both gain it</td>
+</tr>
+<tr>
+<td><code>for neighbor in reversed(graph[node]):</code></td>
+<td>its neighbors are found</td>
+<td>pushed in reverse, the first one listed is popped next</td>
+</tr>
+<tr>
+<td><code>if neighbor not in visited: stack.append(neighbor)</code></td>
+<td>a neighbor not yet taken</td>
+<td>it waits on the stack</td>
+</tr>
+<tr>
+<td><code>return order</code></td>
+<td>the stack is empty</td>
+<td>every node reachable from <code>start</code> is in <code>order</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why mark at pop, not at push.</strong> Marking a node when it is pushed keeps duplicates off the stack, but it claims the node for whichever node saw it first, not for the path that reaches it deepest. With edges A–B, A–C, A–D, B–D, the recursive walk goes A, B, D, C. Marking at push goes A, B, C, D, because A already claimed D before B could reach it. Marking at pop keeps the order identical to <code>dfs_recursive.py</code>.</p>
+<p>The method carries over: write down what the stack holds, then each line either takes a node off it or puts the newly found ones on.</p>
+</section><section class="approach-text panel"><h3>On a binary tree</h3><p>A tree is a graph with no cycles, so every node is reached by exactly one path, from its parent. In the explainer’s tree example, the graph lists each parent as a neighbor, and the parent is the only neighbor <code>visited</code> ever skips.</p>
+<p>A binary tree in LeetCode stores only <code>left</code> and <code>right</code> children, so the walk can never step back to a parent, and the visited set goes away. The recursion is three lines: take the node, walk its left subtree, walk its right subtree. That is <code>dfs_tree.py</code>.</p>
+<p>Where the node’s own work goes names the order:</p>
+<table>
+<thead>
+<tr>
+<th>Order</th>
+<th>The node is handled</th>
+<th>On 1 with children 2, 3, and 2 with children 4, 5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>preorder</td>
+<td>before both subtrees</td>
+<td>1, 2, 4, 5, 3</td>
+</tr>
+<tr>
+<td>inorder</td>
+<td>between the subtrees</td>
+<td>4, 2, 5, 1, 3</td>
+</tr>
+<tr>
+<td>postorder</td>
+<td>after both subtrees</td>
+<td>4, 5, 2, 3, 1</td>
+</tr>
+</tbody>
+</table>
+<p>Postorder is what a depth or a subtree sum needs: a node’s answer is built from its children’s answers, which are ready only once both subtrees are done.</p>
+<p>The reusable recipe: on a tree, drop the visited set and recurse into the children, and choose pre-, in- or postorder by when the node’s own work can happen.</p>
+</section><section class="approach-text panel"><h3>Alternatives compared</h3><table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Time</th>
+<th>Space</th>
+<th>How it works</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Recursion (<code>dfs_recursive.py</code>)</td>
+<td>O(V + E)</td>
+<td>O(V)</td>
+<td>The call stack holds the path back: each call visits its node, then calls itself on each neighbor not yet visited.</td>
+</tr>
+<tr>
+<td><strong>Explicit stack</strong> (<code>dfs_graph.py</code>)</td>
+<td><strong>O(V + E)</strong></td>
+<td><strong>O(V + E)</strong></td>
+<td>A list used as a stack holds the nodes still to try; nodes are marked when popped.</td>
+</tr>
+<tr>
+<td>Breadth-first search</td>
+<td>O(V + E)</td>
+<td>O(V)</td>
+<td>The same loop with a queue: it reaches the same nodes, nearest first.</td>
+</tr>
+</tbody>
+</table>
+<p>Recursion is the shortest to write, but each step deeper is one more call, and Python stops at 1,000 calls by default: a path of 10,000 nodes raises <code>RecursionError</code>. The explicit stack has no such limit.</p>
+<p>Pick depth-first search when the answer depends on whole paths or whole subtrees: tree depths and sums, cycle detection, connected components, and backtracking through choices. Pick breadth-first search when the answer is about distance, such as the fewest steps from the start.</p>
+</section></section><section class="explainer"><style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).only=e;window.dispatchEvent(new Event("astro:only"));})();</script><script>(()=>{var g=Object.defineProperty;var w=(a,s,c)=>s in a?g(a,s,{enumerable:!0,configurable:!0,writable:!0,value:c}):a[s]=c;var l=(a,s,c)=>w(a,typeof s!="symbol"?s+"":s,c);var E=new Set(["__proto__","constructor","prototype"]);{let a={0:t=>y(t),1:t=>c(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(c(t)),5:t=>new Set(c(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>Number.POSITIVE_INFINITY*t},s=t=>{let[p,e]=t;return p in a?a[p](e):void 0},c=t=>t.map(s),y=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([p,e])=>[p,s(e)]));class f extends HTMLElement{constructor(){super(...arguments);l(this,"Component");l(this,"hydrator");l(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let r=this.querySelectorAll("astro-slot"),n={},d=this.querySelectorAll("template[data-astro-template]");for(let o of d){let i=o.closest(this.tagName);i!=null&&i.isSameNode(this)&&(n[o.getAttribute("data-astro-template")||"default"]=o.innerHTML,o.remove())}for(let o of r){let i=o.closest(this.tagName);i!=null&&i.isSameNode(this)&&(n[o.getAttribute("name")||"default"]=o.innerHTML)}let u;try{u=this.hasAttribute("props")?y(JSON.parse(this.getAttribute("props"))):{}}catch(o){let i=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(i+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${i}`,this.getAttribute("props"),o),o}let h;await this.hydrator(this)(this.Component,u,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});l(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),r.disconnect(),this.childrenConnectedCallback()},r=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});r.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}getRetryImportUrl(e){let r=new URL(e,document.baseURI);return r.searchParams.set("astro-retry",Date.now().toString()),r.toString()}async importWithRetry(e){try{return await import(e)}catch(r){return await new Promise(n=>setTimeout(n,1e3)),import(this.getRetryImportUrl(e))}}handleHydrationError(e){let r=this.getAttribute("component-url"),n=new CustomEvent("astro:hydration-error",{cancelable:!0,bubbles:!0,composed:!0,detail:{error:e,componentUrl:r}});this.dispatchEvent(n)&&console.error(`[astro-island] Error hydrating ${r}`,e)}async start(){let e=JSON.parse(this.getAttribute("opts")),r=this.getAttribute("client");if(Astro[r]===void 0){window.addEventListener(`astro:${r}`,()=>this.start(),{once:!0});return}try{await Astro[r](async()=>{let n=this.getAttribute("renderer-url");try{let[d,{default:u}]=await Promise.all([this.importWithRetry(this.getAttribute("component-url")),n?this.importWithRetry(n):Promise.resolve({default:()=>()=>{}})]),h=this.getAttribute("component-export")||"default";if(h.includes(".")){this.Component=d;for(let m of h.split(".")){if(E.has(m)||!this.Component||typeof this.Component!="object"&&typeof this.Component!="function"||!Object.hasOwn(this.Component,m))throw new Error(`Invalid component export path: ${h}`);this.Component=this.Component[m]}}else{if(E.has(h))throw new Error(`Invalid component export path: ${h}`);this.Component=d[h]}return this.hydrator=u,this.hydrate}catch(d){return this.handleHydrationError(d),()=>{}}},e,this)}catch(n){this.handleHydrationError(n)}}attributeChangedCallback(){this.hydrate()}}l(f,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",f)}})();</script><astro-island uid="jStyl" component-url="/learnleetcode/_astro/Player.CliBfzqr.js" component-export="default" renderer-url="/learnleetcode/_astro/client.CLhIxG29.js" props="{&quot;file&quot;:[0,&quot;/concepts/dfs/explainer.tsx&quot;],&quot;heading&quot;:[0,&quot;h2&quot;]}" ssr client="only" opts="{&quot;name&quot;:&quot;Player&quot;,&quot;value&quot;:&quot;react&quot;}"></astro-island></section><section data-code-file="dfs_graph.py"><h2>dfs_graph.py</h2><pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> dfs</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(graph: dict[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, list[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]], start: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> list[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    visited </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> set</span><span style="color:#24292E;--shiki-dark:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    order </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    stack </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> [start]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    while</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> stack:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        node </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> stack.pop()</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> node </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> visited:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            continue</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        visited.add(node)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        order.append(node)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> neighbor </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> reversed</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(graph[node]):</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> neighbor </span><span style="color:#D73A49;--shiki-dark:#F97583">not</span><span style="color:#D73A49;--shiki-dark:#F97583"> in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> visited:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                stack.append(neighbor)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> order</span></span></code></pre></section><section data-code-file="dfs_recursive.py"><h2>dfs_recursive.py</h2><pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> dfs</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(graph: dict[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, list[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]], start: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> list[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    visited </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> set</span><span style="color:#24292E;--shiki-dark:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    order </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> []</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> visit</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(node: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">None</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        visited.add(node)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        order.append(node)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> neighbor </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> graph[node]:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> neighbor </span><span style="color:#D73A49;--shiki-dark:#F97583">not</span><span style="color:#D73A49;--shiki-dark:#F97583"> in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> visited:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                visit(neighbor)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    visit(start)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> order</span></span></code></pre></section><section data-code-file="dfs_tree.py"><h2>dfs_tree.py</h2><pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># Definition for a binary tree node.</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># class TreeNode:</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#     def __init__(self, val=0, left=None, right=None):</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#         self.val = val</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#         self.left = left</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">#         self.right = right</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> preorder</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(root: TreeNode </span><span style="color:#D73A49;--shiki-dark:#F97583">|</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> None</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> list[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    order </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> []</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> visit</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(node: TreeNode </span><span style="color:#D73A49;--shiki-dark:#F97583">|</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> None</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">None</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        if</span><span style="color:#D73A49;--shiki-dark:#F97583"> not</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> node:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            return</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        order.append(node.val)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        visit(node.left)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        visit(node.right)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    visit(root)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> order</span></span></code></pre></section></main></body></html>
